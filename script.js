@@ -1,38 +1,100 @@
 const products = [
-  { id: "sea-garden", title: "Sea Garden", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85", description: "A quietly joyful study of garden forms and sea-coloured leaves. Painted in a wash of mineral blue, soft green, and warm earth." },
-  { id: "sunday-lemons", title: "Sunday Lemons", category: "Still life", price: 1350, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", description: "A small celebration of slow mornings and sunlight on the table. This cheerful still life is full of soft texture and golden warmth." },
-  { id: "after-the-rain", title: "After the Rain", category: "Island landscape", price: 1650, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85", description: "The rich green quiet that arrives after a tropical shower, with a glimpse of light opening over the hills." },
-  { id: "bougainvillea", title: "Bougainvillea", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", description: "An ode to the generous colour of island gardens. Loose petals and leafy shadows make this an easy, uplifting companion." }
+  { id: "sea-garden", title: "Sea Garden", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85", images: [
+    { src: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print with blue-green botanical leaves" },
+    { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print detail showing soft leaf shapes" },
+    { src: "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print styled among quiet green foliage" }
+  ], description: "A quietly joyful study of garden forms and sea-coloured leaves. Painted in a wash of mineral blue, soft green, and warm earth." },
+  { id: "sunday-lemons", title: "Sunday Lemons", category: "Still life", price: 1350, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
+    { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
+    { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },
+    { src: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print in a warm, sunlit interior" }
+  ], description: "A small celebration of slow mornings and sunlight on the table. This cheerful still life is full of soft texture and golden warmth." },
+  { id: "after-the-rain", title: "After the Rain", category: "Island landscape", price: 1650, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85", images: [
+    { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print with a luminous green island landscape" },
+    { src: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print detail showing layered tropical greens" },
+    { src: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print displayed with a view of misty hills" }
+  ], description: "The rich green quiet that arrives after a tropical shower, with a glimpse of light opening over the hills." },
+  { id: "bougainvillea", title: "Bougainvillea", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
+    { src: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print with loose pink petals and green leaves" },
+    { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print detail showing layered botanical colour" },
+    { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print styled with delicate flowering branches" }
+  ], description: "An ode to the generous colour of island gardens. Loose petals and leafy shadows make this an easy, uplifting companion." }
 ];
 let cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
 let selectedProduct = null;
+let selectedImageIndex = 0;
 
 const formatPrice = (price) => `Rs ${price.toLocaleString("en-MU")}`;
 const openModal = (id) => {
   const modal = document.getElementById(id);
-  if (modal) modal.classList.add("open");
+  if (modal) { modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); }
 };
-const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => modal.classList.remove("open"));
+const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); });
 const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]");
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
 
 function renderProducts() {
   document.getElementById("product-grid").innerHTML = products.map((product) => `
-    <article class="product-card" data-product="${product.id}">
+    <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
       <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
     </article>`).join("");
-  document.querySelectorAll(".product-card").forEach((card) => card.addEventListener("click", () => showProduct(card.dataset.product)));
+  document.querySelectorAll(".product-card").forEach((card) => {
+    card.addEventListener("click", () => showProduct(card.dataset.product));
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showProduct(card.dataset.product); }
+    });
+  });
+}
+
+function updateProductGallery() {
+  const image = selectedProduct.images[selectedImageIndex];
+  const galleryImage = document.getElementById("product-gallery-image");
+  if (!galleryImage) return;
+  galleryImage.src = image.src;
+  galleryImage.alt = image.alt;
+  document.querySelectorAll(".gallery-indicator").forEach((indicator, index) => {
+    const isCurrent = index === selectedImageIndex;
+    indicator.classList.toggle("active", isCurrent);
+    indicator.setAttribute("aria-pressed", String(isCurrent));
+    indicator.setAttribute("aria-label", `Show image ${index + 1} of ${selectedProduct.images.length}`);
+  });
+  document.querySelector(".gallery-current").textContent = selectedImageIndex + 1;
+  document.getElementById("gallery-status").textContent = `Image ${selectedImageIndex + 1} of ${selectedProduct.images.length}: ${image.alt}`;
+}
+
+function moveProductGallery(direction) {
+  selectedImageIndex = (selectedImageIndex + direction + selectedProduct.images.length) % selectedProduct.images.length;
+  updateProductGallery();
 }
 
 function showProduct(id) {
   selectedProduct = products.find((product) => product.id === id);
+  selectedImageIndex = 0;
   document.getElementById("product-detail").innerHTML = `
-    <img class="product-detail-image" src="${selectedProduct.image}" alt="${selectedProduct.title} watercolor print" />
+    <div class="product-gallery" role="region" aria-roledescription="carousel" aria-label="${selectedProduct.title} print gallery" tabindex="0">
+      <div class="product-gallery-frame">
+        <img class="product-detail-image" id="product-gallery-image" src="${selectedProduct.images[0].src}" alt="${selectedProduct.images[0].alt}" />
+        <button class="gallery-control gallery-previous" type="button" aria-label="Show previous image"><span aria-hidden="true">&larr;</span></button>
+        <button class="gallery-control gallery-next" type="button" aria-label="Show next image"><span aria-hidden="true">&rarr;</span></button>
+      </div>
+      <div class="gallery-navigation"><div class="gallery-indicators" aria-label="Choose an image">${selectedProduct.images.map((image, index) => `<button class="gallery-indicator${index === 0 ? " active" : ""}" type="button" data-image-index="${index}" aria-label="Show image ${index + 1} of ${selectedProduct.images.length}" aria-pressed="${index === 0}"><span class="sr-only">Image ${index + 1}</span></button>`).join("")}</div><p class="gallery-count" aria-hidden="true"><span class="gallery-current">1</span> / ${selectedProduct.images.length}</p></div>
+      <p class="sr-only" id="gallery-status" aria-live="polite"></p>
+    </div>
     <div><p class="eyebrow">${selectedProduct.category}</p><h2>${selectedProduct.title}</h2><p class="price">From ${formatPrice(selectedProduct.price)}</p><p class="description">${selectedProduct.description}</p>
     <div class="detail-row"><label>Choose your size</label><div class="sizes"><button class="size-option active" data-size="A4">A4 &middot; ${formatPrice(selectedProduct.price)}</button><button class="size-option" data-size="A3">A3 &middot; ${formatPrice(selectedProduct.price + 700)}</button><button class="size-option" data-size="A2">A2 &middot; ${formatPrice(selectedProduct.price + 1550)}</button></div></div>
     <div class="detail-row"><label>Paper</label><p>310gsm textured archival fine-art paper</p></div><div class="detail-row"><label>Preparation time</label><p>Made to order in 5–8 business days</p></div>
     <button class="button button-dark add-to-cart">Add to bag <span>→</span></button></div>`;
+  document.querySelector(".gallery-previous").addEventListener("click", () => moveProductGallery(-1));
+  document.querySelector(".gallery-next").addEventListener("click", () => moveProductGallery(1));
+  document.querySelectorAll(".gallery-indicator").forEach((button) => button.addEventListener("click", () => {
+    selectedImageIndex = Number(button.dataset.imageIndex);
+    updateProductGallery();
+  }));
+  document.querySelector(".product-gallery").addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft") { event.preventDefault(); moveProductGallery(-1); }
+    if (event.key === "ArrowRight") { event.preventDefault(); moveProductGallery(1); }
+  });
   document.querySelectorAll(".size-option").forEach((button) => button.addEventListener("click", () => {
     document.querySelectorAll(".size-option").forEach((item) => item.classList.remove("active"));
     button.classList.add("active");
@@ -43,6 +105,7 @@ function showProduct(id) {
     cart.push({ ...selectedProduct, size, price, lineId: `${selectedProduct.id}-${size}-${Date.now()}` });
     saveCart(); closeModals(); renderCart(); openModal("cart-modal");
   });
+  updateProductGallery();
   openModal("product-modal");
 }
 
@@ -112,6 +175,7 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("close-modal") || event.target.classList.contains("modal")) closeModals();
   if (event.target.closest('a[href="#policies"]')) { event.preventDefault(); openModal("policies-modal"); }
 });
+document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeModals(); });
 const menuToggle = document.querySelector(".menu-toggle");
 if (menuToggle) menuToggle.addEventListener("click", () => { const nav = document.querySelector(".main-nav"); nav.classList.toggle("open"); menuToggle.setAttribute("aria-expanded", nav.classList.contains("open")); });
 const trackingForm = document.getElementById("tracking-form");

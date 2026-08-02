@@ -8,7 +8,10 @@ let cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
 let selectedProduct = null;
 
 const formatPrice = (price) => `Rs ${price.toLocaleString("en-MU")}`;
-const openModal = (id) => document.getElementById(id).classList.add("open");
+const openModal = (id) => {
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add("open");
+};
 const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => modal.classList.remove("open"));
 const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]");
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
@@ -43,21 +46,29 @@ function showProduct(id) {
   openModal("product-modal");
 }
 
-function saveCart() { localStorage.setItem("ajna-cart", JSON.stringify(cart)); document.querySelector(".cart-count").textContent = cart.length; }
+function saveCart() {
+  localStorage.setItem("ajna-cart", JSON.stringify(cart));
+  document.querySelectorAll(".cart-count").forEach((count) => { count.textContent = cart.length; });
+}
 function renderCart() {
-  const items = document.getElementById("cart-items"), empty = document.getElementById("cart-empty"), subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+  const items = document.getElementById("cart-items"), empty = document.getElementById("cart-empty");
+  if (!items || !empty) return;
+  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
   items.innerHTML = cart.map((item) => `<div class="cart-item"><img src="${item.image}" alt="${item.title}" /><div><h3>${item.title}</h3><p>${item.size} print &middot; Fine-art paper</p><p>${formatPrice(item.price)}</p></div><button class="remove-item" data-id="${item.lineId}">Remove</button></div>`).join("");
   empty.style.display = cart.length ? "none" : "block";
-  document.querySelector(".cart-summary").style.display = cart.length ? "flex" : "none";
-  document.querySelector(".shipping-note").style.display = cart.length ? "block" : "none";
-  document.querySelector(".checkout-trigger").style.display = cart.length ? "flex" : "none";
-  document.getElementById("cart-subtotal").textContent = formatPrice(subtotal);
+  const cartSummary = document.querySelector(".cart-summary"), shippingNote = document.querySelector(".shipping-note"), checkoutTrigger = document.querySelector(".checkout-trigger"), cartSubtotal = document.getElementById("cart-subtotal");
+  if (cartSummary) cartSummary.style.display = cart.length ? "flex" : "none";
+  if (shippingNote) shippingNote.style.display = cart.length ? "block" : "none";
+  if (checkoutTrigger) checkoutTrigger.style.display = cart.length ? "flex" : "none";
+  if (cartSubtotal) cartSubtotal.textContent = formatPrice(subtotal);
   document.querySelectorAll(".remove-item").forEach((button) => button.addEventListener("click", () => { cart = cart.filter((item) => item.lineId !== button.dataset.id); saveCart(); renderCart(); }));
 }
 
 function showCheckout() {
+  const checkoutContent = document.getElementById("checkout-content");
+  if (!checkoutContent) return;
   const total = cart.reduce((sum, item) => sum + item.price, 0);
-  document.getElementById("checkout-content").innerHTML = `<p class="eyebrow">Order enquiry</p><h2>Almost there.</h2><div class="checkout-notice"><strong>Submitting this order does not require immediate payment.</strong><br />You will receive a personal confirmation with the final delivery cost and secure payment instructions. Your order will only be confirmed once payment has been received.</div>
+  checkoutContent.innerHTML = `<p class="eyebrow">Order enquiry</p><h2>Almost there.</h2><div class="checkout-notice"><strong>Submitting this order does not require immediate payment.</strong><br />You will receive a personal confirmation with the final delivery cost and secure payment instructions. Your order will only be confirmed once payment has been received.</div>
   <form class="checkout-form" id="checkout-form"><label>First name<input required name="firstName" /></label><label>Last name<input required name="lastName" /></label><label>Email address<input required type="email" name="email" /></label><label>Phone number<input required type="tel" name="phone" /></label><label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label><label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label><label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option>Local bank transfer</option><option>International bank transfer</option><option>Mobile payment (Mauritius)</option><option>Arrange another method directly</option></select></label><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
   document.getElementById("checkout-form").addEventListener("submit", submitOrder);
@@ -73,16 +84,20 @@ function submitOrder(event) {
 }
 
 function showAccount() {
+  const accountContent = document.getElementById("account-content");
+  if (!accountContent) return;
   const orders = savedOrders();
-  document.getElementById("account-content").innerHTML = `<p class="eyebrow">Your Ajna account</p><h2>Your orders</h2><p>Keep your order reference and email handy to track any order.</p><div class="account-tabs"><button class="active">Orders</button><button class="account-track">Track an order</button><button class="studio-orders">Studio order desk</button></div>${orders.length ? orders.map(orderCard).join("") : `<div class="order-card"><strong>No orders saved in this browser yet.</strong><p>When you place an order, its details will appear here.</p></div>`}`;
+  accountContent.innerHTML = `<p class="eyebrow">Your Ajna account</p><h2>Your orders</h2><p>Keep your order reference and email handy to track any order.</p><div class="account-tabs"><button class="active">Orders</button><button class="account-track">Track an order</button><button class="studio-orders">Studio order desk</button></div>${orders.length ? orders.map(orderCard).join("") : `<div class="order-card"><strong>No orders saved in this browser yet.</strong><p>When you place an order, its details will appear here.</p></div>`}`;
   document.querySelector(".account-track").addEventListener("click", () => { closeModals(); openModal("tracking-modal"); });
   document.querySelector(".studio-orders").addEventListener("click", showStudioOrders);
   openModal("account-modal");
 }
 function orderCard(order) { return `<div class="order-card"><div class="order-card-head"><strong>${order.reference}</strong><span class="status">${order.status}</span></div><p>${order.products.map((product) => `${product.title} (${product.size})`).join(", ")}<br />Placed ${order.date}</p></div>`; }
 function showStudioOrders() {
+  const accountContent = document.getElementById("account-content");
+  if (!accountContent) return;
   const orders = savedOrders(), statuses = ["Pending Confirmation", "Order received", "Awaiting payment", "Payment received", "Print being prepared", "Shipped", "Delivered"];
-  document.getElementById("account-content").innerHTML = `<p class="eyebrow">Private studio view</p><h2>Order desk</h2><p>Update an order after reviewing availability, delivery, and payment.</p>${orders.length ? orders.map((order) => `<div class="order-card"><div class="order-card-head"><strong>${order.reference}</strong><span class="status">${order.status}</span></div><p>${order.name} &middot; ${order.country}<br />${order.products.map((product) => `${product.title} (${product.size})`).join(", ")}</p><label class="sr-only" for="status-${order.reference}">Order status</label><select class="status-select" id="status-${order.reference}" data-reference="${order.reference}">${statuses.map((status) => `<option ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}</select></div>`).join("") : `<div class="order-card"><strong>No orders to manage yet.</strong></div>`}`;
+  accountContent.innerHTML = `<p class="eyebrow">Private studio view</p><h2>Order desk</h2><p>Update an order after reviewing availability, delivery, and payment.</p>${orders.length ? orders.map((order) => `<div class="order-card"><div class="order-card-head"><strong>${order.reference}</strong><span class="status">${order.status}</span></div><p>${order.name} &middot; ${order.country}<br />${order.products.map((product) => `${product.title} (${product.size})`).join(", ")}</p><label class="sr-only" for="status-${order.reference}">Order status</label><select class="status-select" id="status-${order.reference}" data-reference="${order.reference}">${statuses.map((status) => `<option ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}</select></div>`).join("") : `<div class="order-card"><strong>No orders to manage yet.</strong></div>`}`;
   document.querySelectorAll(".status-select").forEach((select) => select.addEventListener("change", () => {
     const updatedOrders = savedOrders().map((order) => order.reference === select.dataset.reference ? { ...order, status: select.value } : order);
     saveOrders(updatedOrders); showStudioOrders();
@@ -97,7 +112,8 @@ document.addEventListener("click", (event) => {
   if (event.target.classList.contains("close-modal") || event.target.classList.contains("modal")) closeModals();
   if (event.target.closest('a[href="#policies"]')) { event.preventDefault(); openModal("policies-modal"); }
 });
-document.querySelector(".menu-toggle").addEventListener("click", () => { const nav = document.querySelector(".main-nav"), menu = document.querySelector(".menu-toggle"); nav.classList.toggle("open"); menu.setAttribute("aria-expanded", nav.classList.contains("open")); });
+const menuToggle = document.querySelector(".menu-toggle");
+if (menuToggle) menuToggle.addEventListener("click", () => { const nav = document.querySelector(".main-nav"); nav.classList.toggle("open"); menuToggle.setAttribute("aria-expanded", nav.classList.contains("open")); });
 const trackingForm = document.getElementById("tracking-form");
 if (trackingForm) trackingForm.addEventListener("submit", (event) => { event.preventDefault(); const order = savedOrders().find((item) => item.reference.toLowerCase() === document.getElementById("tracking-order").value.trim().toLowerCase() && item.email.toLowerCase() === document.getElementById("tracking-email").value.trim().toLowerCase()); document.getElementById("tracking-result").innerHTML = order ? `<div class="order-card"><div class="order-card-head"><strong>${order.reference}</strong><span class="status">${order.status}</span></div><p>${order.products.map((product) => `${product.title} (${product.size})`).join(", ")}<br />We'll email you when your order moves to its next stage.</p></div>` : `<p>No order was found with those details. Please check your reference and email.</p>`; });
 const newsletterForm = document.getElementById("newsletter-form");

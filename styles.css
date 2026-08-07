@@ -22,7 +22,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   color:#A6533F;
   text-decoration:none;
   letter-spacing:.01em;
-  text-transform:uppercase; /* script looks better not all-caps */
+  /* text-transform:uppercase; script looks better not all-caps */
 }
 .brand span{color:var(--clay)}.main-nav{display:flex;gap:30px;margin:auto}
 .main-nav a,.footer-links a{color:var(--ink);text-decoration:none;font-size:13px}

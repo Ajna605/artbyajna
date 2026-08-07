@@ -19,7 +19,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   font-size:44px;
   line-height:1;
   font-weight:400;
-  color:var(--ink);
+  color:#A6533F;
   text-decoration:none;
   letter-spacing:.01em;
   text-transform:uppercase; /* script looks better not all-caps */

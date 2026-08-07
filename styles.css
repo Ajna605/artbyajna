@@ -12,12 +12,7 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",sans-serif;font-size:15px;line-height:1.65}
 .announcement{background:linear-gradient(90deg,#fff5ef 0%,#fffaf2 45%,#f2f9ff 100%);color:#6f645d;text-align:center;font:11px "DM Mono",monospace;letter-spacing:.04em;padding:8px 20px}
 .site-header{height:90px;display:flex;align-items:center;padding:0 5.5vw;border-bottom:1px solid var(--line);gap:35px}
-.brand{
-  font-family:"Caveat Brush","Playfair Display",serif;
-  font-size:38px;      /* tune 36–42 */
-  letter-spacing:.01em;
-  font-style:normal;   /* usually better for brush fonts */
-}
+.brand{font:600 34px/1 "Playfair Display",serif;color:var(--ink);text-decoration:none;letter-spacing:-.06em;text-transform:uppercase}
 .brand span{color:var(--clay)}.main-nav{display:flex;gap:30px;margin:auto}
 .main-nav a,.footer-links a{color:var(--ink);text-decoration:none;font-size:13px}
 .main-nav a:hover,.footer-links a:hover{color:var(--clay)}

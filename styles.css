@@ -58,7 +58,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   transform: rotate(-2deg);
   opacity: 0.8;
 }
-/* .brand span{color:var(--clay)}.main-nav{display:flex;gap:30px;margin:auto} */
+.brand span{color:var(--clay)}.main-nav{display:flex;gap:30px;margin:auto}
 .main-nav a,.footer-links a{color:var(--ink);text-decoration:none;font-size:13px}
 .main-nav a:hover,.footer-links a:hover{color:var(--clay)}
 .header-actions{display:flex;align-items:center;gap:20px}.text-button,.bag-button{border:0;background:none;font:13px "DM Sans",sans-serif;color:var(--ink);cursor:pointer;padding:6px}.cart-count{font:10px "DM Mono",monospace;background:var(--clay);color:white;border-radius:50%;padding:2px 5px;margin-left:3px}.menu-toggle{display:none}.hero{min-height:650px;display:grid;grid-template-columns:1fr 1.04fr;align-items:center;padding:75px 11vw 80px;gap:8vw}.eyebrow{font:11px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.11em;color:#79776f;margin:0 0 20px}.hero h1,h2{font:500 clamp(40px,5vw,68px)/1.1 "Playfair Display",serif;letter-spacing:-.045em;margin:0}.hero h1 em,.large-copy em{font-weight:500}.hero-description{max-width:380px;color:var(--muted);font-size:16px;margin:28px 0 32px}.button{display:inline-flex;align-items:center;justify-content:space-between;gap:35px;border:0;padding:15px 19px;text-decoration:none;font:500 12px "DM Sans",sans-serif;letter-spacing:.02em;cursor:pointer}

@@ -79,7 +79,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   height: 485px;
   display: block;
   object-fit: cover;
-  object-position: center bottom;
+  object-position: center 80%;
   filter: none;
 }
 .art-caption{position:absolute;right:-40px;bottom:13px;margin:0;color:var(--muted);font:italic 13px "Playfair Display",serif;transform:rotate(-2.2deg)}.section{padding:120px 8vw}.intro{background:var(--cream);text-align:center;padding-left:15vw;padding-right:15vw}.intro .eyebrow{margin-bottom:30px}.large-copy{font:500 clamp(27px,3.4vw,45px)/1.32 "Playfair Display",serif;letter-spacing:-.03em;margin:0 auto 30px;max-width:1000px}.underlined-link{display:inline-flex;gap:13px;align-items:center;color:var(--brand-blue);font-size:13px;text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:3px}.underlined-link:hover{color:var(--brand-teal)}.underlined-link span{font-size:17px}

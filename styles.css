@@ -18,7 +18,6 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   position: relative;
   display: inline-flex;
   align-items: baseline;
-  text-decoration: none;
   
   font-family:"Shadows Into Light", cursive;
   font-size:72px;          /* bigger like a heading */
@@ -35,7 +34,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
 }
 
 .brand span:nth-child(2) {
-  transform: rotate(2deg) translateY(-3px);
+  transform: rotate(4deg) translateY(-3px);
 }
 
 .brand span:nth-child(3) {

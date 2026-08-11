@@ -16,12 +16,12 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
 
 .brand{
   font-family:"Shadows Into Light", cursive;
-  font-size:50px;
-  line-height:1;
-  font-weight:500;
+  font-size:72px;          /* bigger like a heading */
+  line-height:.95;
+  font-weight:700;         /* bolder */
   color:#b06755;
   text-decoration:none;
-  letter-spacing:.01em;
+  letter-spacing:.02em;
   text-transform:uppercase;
 }
 .brand span{color:var(--clay)}.main-nav{display:flex;gap:30px;margin:auto}

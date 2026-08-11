@@ -78,7 +78,7 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   width: 100%;
   height: 485px;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center 80%;
   filter: none;
 }

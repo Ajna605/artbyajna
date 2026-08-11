@@ -22,19 +22,35 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:"DM Sans",san
   font-family:"Shadows Into Light", cursive;
   font-size:72px;          /* bigger like a heading */
   line-height:.95;
-  font-weight:700;         /* bolder */
+  font-weight:600;         /* bolder */
   color:#b06755;
   text-decoration:none;
   letter-spacing:.02em;
   text-transform:uppercase;
 }
 
+/* A */
 .brand span:nth-child(1) {
-  color: var(--clay); /* deep warm charcoal */
+  color: #103D6B;
+  transform: rotate(-2deg) translateY(1px);
 }
 
+/* J */
+.brand span:nth-child(2) {
+  color: #103D6B;
+  transform: rotate(1deg) translateY(2px);
+}
+
+/* N */
+.brand span:nth-child(3) {
+  color: #103D6B;
+  transform: rotate(-1deg);
+}
+
+/* Final A */
 .brand span:nth-child(4) {
-  color: var(--clay); /* terracotta accent on J */
+  color: #4C9B99;
+  transform: rotate(2deg) translateY(-1px);
 }
 
 

@@ -142,6 +142,7 @@ function submitOrder(event) {
   const form = new FormData(event.target), reference = `AJNA-${Math.floor(1000 + Math.random() * 9000)}`;
   const order = { reference, status: "Pending Confirmation", name: `${form.get("firstName")} ${form.get("lastName")}`, email: form.get("email"), phone: form.get("phone"), address: form.get("address"), country: form.get("country"), payment: form.get("payment"), products: cart, date: new Date().toLocaleDateString("en-GB") };
   const orders = savedOrders(); orders.push(order); saveOrders(orders); cart = []; saveCart();
+  fetch("/api/order-notification", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
   document.getElementById("checkout-content").innerHTML = `<div class="confirmation"><p class="eyebrow">Order submitted</p><h2>Thank you, ${order.name.split(" ")[0]}.</h2><p>Your order reference is</p><p class="reference">${reference}</p><span class="status">Pending confirmation</span><p>I'll be in touch personally to confirm availability, delivery costs, and private payment instructions. Your order is not final until payment has been received.</p><button class="button button-dark close-confirmation">Continue browsing <span>→</span></button></div>`;
   document.querySelector(".close-confirmation").addEventListener("click", closeModals);
 }

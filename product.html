@@ -31,7 +31,6 @@
       document.querySelector(".product-detail").innerHTML = "<p>Product not found.</p>";
     } else {
       document.getElementById("title").textContent = product.title;
-      document.getElementById("category").textContent = product.category;
       document.getElementById("price").textContent = `Rs ${product.price}`;
       document.getElementById("description").textContent = product.description || "";
         // after finding "product"

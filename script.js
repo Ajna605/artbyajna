@@ -7,11 +7,11 @@ const products = [
     paper: "310gsm archival matte paper",
     image: "images/fazalux/chatty-fazalux-front.png",
     images: [
-      { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
-      { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
-      { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
-      { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
-      { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
+      { type: "image", src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
+      { type: "image", src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
+      { type: "video", src: "images/fazalux/showflip.mp4", poster: "images/fazalux/chatty-fazalux-front.png", alt: "Painting process video" }
     ],
     description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!"
   },

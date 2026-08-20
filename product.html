@@ -36,7 +36,7 @@
           <div class="gallery-col">
             <div id="thumbs" class="thumbs"></div>
             <div class="main-image-wrap">
-              <img id="main-image" class="main-image" src="${allImages[0]?.src || ""}" alt="${allImages[0]?.alt || product.title}">
+              <div id="main-media" class="main-media"></div>
               <button class="img-nav prev" type="button" aria-label="Previous image">←</button>
               <button class="img-nav next" type="button" aria-label="Next image">→</button>
             </div>
@@ -59,12 +59,12 @@
 
             <div class="detail-row">
               <label>Paper</label>
-              <p>${product.paper || "310gsm textured archival fine-art paper"}</p>
+              <p>${product.paper || "240gsm textured archival fine-art paper"}</p>
             </div>
 
             <div class="detail-row">
               <label>Shipping costs</label>
-              <p>${product.shipping || "Local and international postage cost an extra Rs 50 and Rs 200 respectively."}</p>
+              <p>${"Ships in 3–5 business daysLocal and international postage cost an extra Rs 50 and Rs 200 respectively."}</p>
             </div>
 
             <button class="button button-dark add-to-cart-detail">Add to bag <span>→</span></button>
@@ -91,12 +91,22 @@
       }
 
       function renderMain() {
-        if (!allImages.length) return;
-        const current = allImages[selectedIndex];
-        mainImage.src = current.src;
-        mainImage.alt = current.alt || product.title;
+        if (!allMedia.length) return;
+        const current = allMedia[selectedIndex];
+        const mainMedia = document.getElementById("main-media");
+
+        if (current.type === "video") {
+            mainMedia.innerHTML = `
+            <video class="main-image" controls playsinline poster="${current.poster || ""}">
+                <source src="${current.src}" type="video/mp4" />
+                Your browser does not support the video tag.
+            </video>`;
+        } else {
+            mainMedia.innerHTML = `
+            <img class="main-image" src="${current.src}" alt="${current.alt || product.title}" />`;
+        }
         renderThumbs();
-      }
+        }
 
       function move(step) {
         if (!allImages.length) return;

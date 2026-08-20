@@ -17,19 +17,38 @@
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
     const product = products.find(p => p.id === id);
-
     const container = document.getElementById("product-detail");
 
     if (!product) {
       container.innerHTML = "<p>Product not found.</p>";
     } else {
       const basePrice = product.price || 0;
+      const allImages = [
+        ...(product.image ? [{ src: product.image, alt: product.title }] : []),
+        ...(Array.isArray(product.images) ? product.images : [])
+      ].filter(img => img && img.src);
+
+      let selectedIndex = 0;
 
       container.innerHTML = `
         <div>
           <p class="eyebrow">${product.category || ""}</p>
           <h1>${product.title}</h1>
           <p class="price">From Rs ${basePrice.toLocaleString("en-MU")}</p>
+
+          <!-- Carousel moved up directly under title/price -->
+          <div class="product-carousel" aria-label="${product.title} image carousel">
+            <div class="carousel-frame">
+              <img id="carousel-image" class="product-detail-image"
+                src="${allImages[0]?.src || ""}"
+                alt="${allImages[0]?.alt || product.title}" />
+              <button id="carousel-prev" class="gallery-control gallery-previous" type="button" aria-label="Previous image">←</button>
+              <button id="carousel-next" class="gallery-control gallery-next" type="button" aria-label="Next image">→</button>
+            </div>
+            <div id="carousel-dots" class="gallery-indicators"></div>
+            <p id="carousel-status" class="sr-only" aria-live="polite"></p>
+          </div>
+
           <p class="description">${product.description || ""}</p>
 
           <div class="detail-row">
@@ -51,22 +70,46 @@
             <p>${product.shipping || "Local and international postage cost an extra Rs 50 and Rs 200 respectively."}</p>
           </div>
         </div>
-
-        <div id="gallery" class="product-gallery-grid"></div>
       `;
 
-      // images
-      const allImages = [
-        ...(product.image ? [{ src: product.image, alt: product.title }] : []),
-        ...(Array.isArray(product.images) ? product.images : [])
-      ].filter(img => img && img.src);
+      const imageEl = document.getElementById("carousel-image");
+      const dotsEl = document.getElementById("carousel-dots");
+      const statusEl = document.getElementById("carousel-status");
+      const prevBtn = document.getElementById("carousel-prev");
+      const nextBtn = document.getElementById("carousel-next");
 
-      const gallery = document.getElementById("gallery");
-      gallery.innerHTML = allImages.map(img => `
-        <img class="product-detail-thumb" src="${img.src}" alt="${img.alt || product.title}" />
-      `).join("");
+      function renderDots() {
+        dotsEl.innerHTML = allImages.map((_, i) => `
+          <button class="gallery-indicator${i === selectedIndex ? " active" : ""}" data-index="${i}" aria-label="Show image ${i + 1}"></button>
+        `).join("");
+        dotsEl.querySelectorAll(".gallery-indicator").forEach(btn => {
+          btn.addEventListener("click", () => {
+            selectedIndex = Number(btn.dataset.index);
+            renderCarousel();
+          });
+        });
+      }
 
-      // size selection behavior
+      function renderCarousel() {
+        if (!allImages.length) return;
+        const current = allImages[selectedIndex];
+        imageEl.src = current.src;
+        imageEl.alt = current.alt || product.title;
+        statusEl.textContent = `Image ${selectedIndex + 1} of ${allImages.length}`;
+        renderDots();
+      }
+
+      function move(step) {
+        if (!allImages.length) return;
+        selectedIndex = (selectedIndex + step + allImages.length) % allImages.length;
+        renderCarousel();
+      }
+
+      prevBtn.addEventListener("click", () => move(-1));
+      nextBtn.addEventListener("click", () => move(1));
+
+      renderCarousel();
+
       document.querySelectorAll(".size-option").forEach((button) => {
         button.addEventListener("click", () => {
           document.querySelectorAll(".size-option").forEach((b) => b.classList.remove("active"));

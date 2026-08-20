@@ -11,9 +11,11 @@
     <a class="underlined-link" href="shop.html">← Back to shop</a>
     <section class="product-detail">
       <h1 id="title"></h1>
-      <p id="category"></p>
       <p id="price"></p>
       <p id="description"></p>
+      <p><strong>Size:</strong> <span id="size"></span></p>
+    <p><strong>Paper:</strong> <span id="paper"></span></p>
+    <p><strong>Shipping:</strong> <span id="shipping"></span></p>
       <div id="gallery"></div>
     </section>
   </main>
@@ -32,6 +34,10 @@
       document.getElementById("category").textContent = product.category;
       document.getElementById("price").textContent = `Rs ${product.price}`;
       document.getElementById("description").textContent = product.description || "";
+        // after finding "product"
+      document.getElementById("size").textContent = product.size || "Not specified";
+      document.getElementById("paper").textContent = product.paper || "Not specified";
+      document.getElementById("shipping").textContent = product.shipping || "Shipping details on request";
 
       const gallery = document.getElementById("gallery");
       const allImages = [{ src: product.image, alt: product.title }, ...(product.images || [])];

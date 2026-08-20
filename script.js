@@ -1,11 +1,21 @@
 const products = [
-  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "Mauritius Daily", price: 250, image: "images/fazalux/chatty-fazalux-front.png", images: [
-    { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
-    { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
-    { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
-  ], description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!" },
+  {
+    id: "Fazalux Magasin",
+    title: "Fazalux Magasin",
+    price: 250,
+    size: "A3 (29.7 × 42 cm)",
+    paper: "310gsm archival matte paper",
+    shipping: "Ships in 3–5 business days",
+    image: "images/fazalux/chatty-fazalux-front.png",
+    images: [
+      { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
+      { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
+      { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
+      { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
+      { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
+    ],
+    description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!"
+  },
   { id: "sunday-lemons", title: "Infinity Papaya", category: "Still life", price: 250, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
     { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },

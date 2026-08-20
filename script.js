@@ -1,5 +1,5 @@
 const products = [
-  { id: "sea-garden", title: "Sea Garden", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85", images: [
+  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "print", price: 1450, image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print with blue-green botanical leaves" },
     { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print detail showing soft leaf shapes" },
     { src: "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print styled among quiet green foliage" }

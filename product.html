@@ -1,117 +1,37 @@
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("product-detail");
-  if (!container) return;
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="section product-page">
+    <a class="underlined-link back-link" href="shop.html">← Back to shop</a>
+    <section id="product-detail"></section>
+  </main>
 
-  const id = new URLSearchParams(window.location.search).get("id");
-  if (typeof products === "undefined" || !Array.isArray(products)) {
-    container.innerHTML = "<p>Products data failed to load.</p>";
-    return;
-  }
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("product-detail");
+      if (!container) return;
 
-  const product = products.find(p => String(p.id) === String(id));
-  if (!product) {
-    container.innerHTML = "<p>Product not found.</p>";
-    return;
-  }
+      const id = new URLSearchParams(window.location.search).get("id");
+      if (typeof products === "undefined" || !Array.isArray(products)) {
+        container.innerHTML = "<p>Products data failed to load.</p>";
+        return;
+      }
 
-  const basePrice = Number(product.price) || 0;
-  const allMedia = [
-    ...(product.image ? [{ type: "image", src: product.image, alt: product.title || "Artwork" }] : []),
-    ...(Array.isArray(product.images) ? product.images : [])
-  ]
-    .map(item => ({
-      type: item?.type === "video" ? "video" : "image",
-      src: item?.src || "",
-      alt: item?.alt || product.title || "Artwork",
-      poster: item?.poster || ""
-    }))
-    .filter(item => item.src);
+      const product = products.find(p => String(p.id) === String(id));
+      if (!product) {
+        container.innerHTML = "<p>Product not found.</p>";
+        return;
+      }
 
-  let selectedIndex = 0;
-
-  container.innerHTML = `
-    <div class="product-two-col">
-      <div class="gallery-col">
-        <div id="thumbs" class="thumbs"></div>
-        <div class="main-image-wrap">
-          <div id="main-media" class="main-media"></div>
-          <button class="img-nav prev" type="button" aria-label="Previous image">←</button>
-          <button class="img-nav next" type="button" aria-label="Next image">→</button>
-        </div>
-      </div>
-
-      <div class="details-col">
-        <p class="eyebrow">${product.category || ""}</p>
-        <h1 class="product-title">${product.title || ""}</h1>
-        <p class="description">${product.description || ""}</p>
-
-        <div class="detail-row">
-          <label>Choose your size</label>
-          <div class="sizes">
-            <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
-            <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
-            <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
-          </div>
-        </div>
-
-        <div class="detail-row">
-          <label>Paper</label>
-          <p>${product.paper || "240gsm textured archival fine-art paper"}</p>
-        </div>
-
-        <div class="detail-row">
-          <label>Shipping costs</label>
-          <p>Local and international postage cost an extra Rs 50 and Rs 200 respectively. Ships in 3–5 business days.</p>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const thumbs = document.getElementById("thumbs");
-  const mainMedia = document.getElementById("main-media");
-
-  function renderThumbs() {
-    thumbs.innerHTML = allMedia.map((item, i) => `
-      <button class="thumb ${i === selectedIndex ? "active" : ""}" data-index="${i}" aria-label="View media ${i + 1}">
-        <img src="${item.type === "video" ? (item.poster || item.src) : item.src}" alt="${item.alt}">
-        ${item.type === "video" ? '<span class="thumb-badge">▶</span>' : ""}
-      </button>
-    `).join("");
-
-    thumbs.querySelectorAll(".thumb").forEach(btn => {
-      btn.addEventListener("click", () => {
-        selectedIndex = Number(btn.dataset.index);
-        renderMain();
-      });
+      container.innerHTML = `<h1>${product.title}</h1><p>${product.description || ""}</p>`;
     });
-  }
-
-  function renderMain() {
-    if (!allMedia.length) {
-      mainMedia.innerHTML = `<div class="no-media">No media available</div>`;
-      return;
-    }
-
-    const current = allMedia[selectedIndex];
-    mainMedia.innerHTML = current.type === "video"
-      ? `<video class="main-image" controls playsinline poster="${current.poster || ""}">
-           <source src="${current.src}" type="video/mp4">
-         </video>`
-      : `<img class="main-image" src="${current.src}" alt="${current.alt}">`;
-
-    renderThumbs();
-  }
-
-  function move(step) {
-    if (!allMedia.length) return;
-    selectedIndex = (selectedIndex + step + allMedia.length) % allMedia.length;
-    renderMain();
-  }
-
-  document.querySelector(".img-nav.prev")?.addEventListener("click", () => move(-1));
-  document.querySelector(".img-nav.next")?.addEventListener("click", () => move(1));
-
-  renderMain();
-});
-</script>
+  </script>
+</body>
+</html>

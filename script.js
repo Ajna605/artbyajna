@@ -1,20 +1,27 @@
 const products = [
-  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "print", price: 1450, image: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=900&q=85", images: [
-    { src: "https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print with blue-green botanical leaves" },
-    { src: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print detail showing soft leaf shapes" },
-    { src: "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=1200&q=85", alt: "Sea Garden print styled among quiet green foliage" }
-  ], description: "A quietly joyful study of garden forms and sea-coloured leaves. Painted in a wash of mineral blue, soft green, and warm earth." },
-  { id: "sunday-lemons", title: "Sunday Lemons", category: "Still life", price: 1350, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
+  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "Mauritius Daily", price: 250, image: "images/fazalux/chatty-fazalux-front.png", images: [
+    { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
+    { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
+    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
+    { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
+    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
+  ], description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!" },
+  { id: "sunday-lemons", title: "Infinity Papaya", category: "Still life", price: 250, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
     { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },
     { src: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print in a warm, sunlit interior" }
   ], description: "A small celebration of slow mornings and sunlight on the table. This cheerful still life is full of soft texture and golden warmth." },
-  { id: "after-the-rain", title: "After the Rain", category: "Island landscape", price: 1650, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85", images: [
+  { id: "after-the-rain", title: "Tractor Monkeys", category: "Island landscape", price: 250, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print with a luminous green island landscape" },
     { src: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print detail showing layered tropical greens" },
     { src: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print displayed with a view of misty hills" }
   ], description: "The rich green quiet that arrives after a tropical shower, with a glimpse of light opening over the hills." },
-  { id: "bougainvillea", title: "Bougainvillea", category: "Botanical study", price: 1450, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
+  { id: "bougainvillea", title: "Calm boat", category: "Botanical study", price: 250, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
+    { src: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print with loose pink petals and green leaves" },
+    { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print detail showing layered botanical colour" },
+    { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print styled with delicate flowering branches" }
+  ], description: "An ode to the generous colour of island gardens. Loose petals and leafy shadows make this an easy, uplifting companion." },
+   { id: "bougainvillea", title: "The Red Church", category: "Botanical study", price: 250, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print with loose pink petals and green leaves" },
     { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print detail showing layered botanical colour" },
     { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print styled with delicate flowering branches" }

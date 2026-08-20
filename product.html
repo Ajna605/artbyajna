@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="section">
-    <a class="underlined-link" href="shop.html">← Back to shop</a>
+  <main class="section product-page">
+    <a class="underlined-link back-link" href="shop.html">← Back to shop</a>
     <section id="product-detail"></section>
   </main>
 
@@ -31,84 +31,82 @@
       let selectedIndex = 0;
 
       container.innerHTML = `
-        <div>
-          <p class="eyebrow">${product.category || ""}</p>
-          <h1>${product.title}</h1>
-          <p class="price">From Rs ${basePrice.toLocaleString("en-MU")}</p>
-
-          <!-- Carousel moved up directly under title/price -->
-          <div class="product-carousel" aria-label="${product.title} image carousel">
-            <div class="carousel-frame">
-              <img id="carousel-image" class="product-detail-image"
-                src="${allImages[0]?.src || ""}"
-                alt="${allImages[0]?.alt || product.title}" />
-              <button id="carousel-prev" class="gallery-control gallery-previous" type="button" aria-label="Previous image">←</button>
-              <button id="carousel-next" class="gallery-control gallery-next" type="button" aria-label="Next image">→</button>
-            </div>
-            <div id="carousel-dots" class="gallery-indicators"></div>
-            <p id="carousel-status" class="sr-only" aria-live="polite"></p>
-          </div>
-
-          <p class="description">${product.description || ""}</p>
-
-          <div class="detail-row">
-            <label>Choose your size</label>
-            <div class="sizes">
-              <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
-              <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
-              <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+        <div class="product-two-col">
+          <!-- LEFT: gallery -->
+          <div class="gallery-col">
+            <div id="thumbs" class="thumbs"></div>
+            <div class="main-image-wrap">
+              <img id="main-image" class="main-image" src="${allImages[0]?.src || ""}" alt="${allImages[0]?.alt || product.title}">
+              <button class="img-nav prev" type="button" aria-label="Previous image">←</button>
+              <button class="img-nav next" type="button" aria-label="Next image">→</button>
             </div>
           </div>
 
-          <div class="detail-row">
-            <label>Paper</label>
-            <p>${product.paper || "310gsm textured archival fine-art paper"}</p>
-          </div>
+          <!-- RIGHT: details -->
+          <div class="details-col">
+            <p class="eyebrow">${product.category || ""}</p>
+            <h1 class="product-title">${product.title}</h1>
+            <p class="price">From Rs ${basePrice.toLocaleString("en-MU")}</p>
+            <p class="description">${product.description || ""}</p>
 
-          <div class="detail-row">
-            <label>Shipping costs</label>
-            <p>${product.shipping || "Local and international postage cost an extra Rs 50 and Rs 200 respectively."}</p>
+            <div class="detail-row">
+              <label>Choose your size</label>
+              <div class="sizes">
+                <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
+                <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
+                <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <label>Paper</label>
+              <p>${product.paper || "310gsm textured archival fine-art paper"}</p>
+            </div>
+
+            <div class="detail-row">
+              <label>Shipping costs</label>
+              <p>${product.shipping || "Local and international postage cost an extra Rs 50 and Rs 200 respectively."}</p>
+            </div>
+
+            <button class="button button-dark add-to-cart-detail">Add to bag <span>→</span></button>
           </div>
         </div>
       `;
 
-      const imageEl = document.getElementById("carousel-image");
-      const dotsEl = document.getElementById("carousel-dots");
-      const statusEl = document.getElementById("carousel-status");
-      const prevBtn = document.getElementById("carousel-prev");
-      const nextBtn = document.getElementById("carousel-next");
+      const mainImage = document.getElementById("main-image");
+      const thumbs = document.getElementById("thumbs");
 
-      function renderDots() {
-        dotsEl.innerHTML = allImages.map((_, i) => `
-          <button class="gallery-indicator${i === selectedIndex ? " active" : ""}" data-index="${i}" aria-label="Show image ${i + 1}"></button>
+      function renderThumbs() {
+        thumbs.innerHTML = allImages.map((img, i) => `
+          <button class="thumb ${i === selectedIndex ? "active" : ""}" data-index="${i}" aria-label="View image ${i + 1}">
+            <img src="${img.src}" alt="${img.alt || product.title}">
+          </button>
         `).join("");
-        dotsEl.querySelectorAll(".gallery-indicator").forEach(btn => {
+
+        thumbs.querySelectorAll(".thumb").forEach(btn => {
           btn.addEventListener("click", () => {
             selectedIndex = Number(btn.dataset.index);
-            renderCarousel();
+            renderMain();
           });
         });
       }
 
-      function renderCarousel() {
+      function renderMain() {
         if (!allImages.length) return;
         const current = allImages[selectedIndex];
-        imageEl.src = current.src;
-        imageEl.alt = current.alt || product.title;
-        statusEl.textContent = `Image ${selectedIndex + 1} of ${allImages.length}`;
-        renderDots();
+        mainImage.src = current.src;
+        mainImage.alt = current.alt || product.title;
+        renderThumbs();
       }
 
       function move(step) {
         if (!allImages.length) return;
         selectedIndex = (selectedIndex + step + allImages.length) % allImages.length;
-        renderCarousel();
+        renderMain();
       }
 
-      prevBtn.addEventListener("click", () => move(-1));
-      nextBtn.addEventListener("click", () => move(1));
-
-      renderCarousel();
+      document.querySelector(".img-nav.prev").addEventListener("click", () => move(-1));
+      document.querySelector(".img-nav.next").addEventListener("click", () => move(1));
 
       document.querySelectorAll(".size-option").forEach((button) => {
         button.addEventListener("click", () => {
@@ -116,6 +114,17 @@
           button.classList.add("active");
         });
       });
+
+      document.querySelector(".add-to-cart-detail").addEventListener("click", () => {
+        const size = document.querySelector(".size-option.active").dataset.size;
+        const price = basePrice + (size === "A3" ? 700 : size === "A2" ? 1550 : 0);
+        const cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
+        cart.push({ ...product, size, price, lineId: `${product.id}-${size}-${Date.now()}` });
+        localStorage.setItem("ajna-cart", JSON.stringify(cart));
+        alert("Added to bag");
+      });
+
+      renderMain();
     }
   </script>
 </body>

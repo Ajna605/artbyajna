@@ -5,7 +5,6 @@ const products = [
     price: 250,
     size: "A3 (29.7 × 42 cm)",
     paper: "310gsm archival matte paper",
-    shipping: "Ships in 3–5 business days",
     image: "images/fazalux/chatty-fazalux-front.png",
     images: [
       { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },

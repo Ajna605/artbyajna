@@ -1,131 +1,124 @@
 <script>
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-  const product = products.find(p => p.id === id);
   const container = document.getElementById("product-detail");
 
-  if (!product) {
-    container.innerHTML = "<p>Product not found.</p>";
+  // Guard: products must exist from script.js
+  const hasProducts = typeof products !== "undefined" && Array.isArray(products);
+  if (!hasProducts) {
+    container.innerHTML = "<p>Products data failed to load. Check script.js for syntax errors.</p>";
   } else {
-    const basePrice = product.price || 0;
+    const product = products.find(p => String(p.id) === String(id));
 
-    // Normalize to one list that supports image + video
-    const allMedia = [
-      ...(product.image ? [{ type: "image", src: product.image, alt: product.title }] : []),
-      ...(Array.isArray(product.images) ? product.images : [])
-    ]
+    if (!product) {
+      container.innerHTML = "<p>Product not found.</p>";
+    } else {
+      const basePrice = Number(product.price) || 0;
+
+      const allMedia = [
+        ...(product.image ? [{ type: "image", src: product.image, alt: product.title || "Artwork" }] : []),
+        ...(Array.isArray(product.images) ? product.images : [])
+      ]
       .map(item => ({
-        type: item.type || "image", // default to image
-        src: item.src,
-        alt: item.alt || product.title,
-        poster: item.poster || ""
+        type: item && item.type === "video" ? "video" : "image",
+        src: item && item.src ? item.src : "",
+        alt: (item && item.alt) || product.title || "Artwork",
+        poster: (item && item.poster) || ""
       }))
-      .filter(item => item && item.src);
+      .filter(item => item.src);
 
-    let selectedIndex = 0;
+      let selectedIndex = 0;
 
-    container.innerHTML = `
-      <div class="product-two-col">
-        <div class="gallery-col">
-          <div id="thumbs" class="thumbs"></div>
-          <div class="main-image-wrap">
-            <div id="main-media" class="main-media"></div>
-            <button class="img-nav prev" type="button" aria-label="Previous image">←</button>
-            <button class="img-nav next" type="button" aria-label="Next image">→</button>
-          </div>
-        </div>
-
-        <div class="details-col">
-          <p class="eyebrow">${product.category || ""}</p>
-          <h1 class="product-title">${product.title}</h1>
-          <p class="description">${product.description || ""}</p>
-
-          <div class="detail-row">
-            <label>Choose your size</label>
-            <div class="sizes">
-              <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
-              <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
-              <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+      container.innerHTML = `
+        <div class="product-two-col">
+          <div class="gallery-col">
+            <div id="thumbs" class="thumbs"></div>
+            <div class="main-image-wrap">
+              <div id="main-media" class="main-media"></div>
+              <button class="img-nav prev" type="button" aria-label="Previous image">←</button>
+              <button class="img-nav next" type="button" aria-label="Next image">→</button>
             </div>
           </div>
 
-          <div class="detail-row">
-            <label>Paper</label>
-            <p>${product.paper || "240gsm textured archival fine-art paper"}</p>
-          </div>
+          <div class="details-col">
+            <p class="eyebrow">${product.category || ""}</p>
+            <h1 class="product-title">${product.title || ""}</h1>
+            <p class="description">${product.description || ""}</p>
 
-          <div class="detail-row">
-            <label>Shipping costs</label>
-            <p>Local and international postage cost an extra Rs 50 and Rs 200 respectively. Ships in 3–5 business days.</p>
-          </div>
+            <div class="detail-row">
+              <label>Choose your size</label>
+              <div class="sizes">
+                <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
+                <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
+                <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+              </div>
+            </div>
 
-          <button class="button button-dark add-to-cart-detail">Add to bag <span>→</span></button>
+            <div class="detail-row">
+              <label>Paper</label>
+              <p>${product.paper || "240gsm textured archival fine-art paper"}</p>
+            </div>
+
+            <div class="detail-row">
+              <label>Shipping costs</label>
+              <p>Local and international postage cost an extra Rs 50 and Rs 200 respectively. Ships in 3–5 business days.</p>
+            </div>
+          </div>
         </div>
-      </div>
-    `;
+      `;
 
-    const thumbs = document.getElementById("thumbs");
-    const mainMedia = document.getElementById("main-media");
+      const thumbs = document.getElementById("thumbs");
+      const mainMedia = document.getElementById("main-media");
 
-    function renderThumbs() {
-      thumbs.innerHTML = allMedia.map((item, i) => `
-        <button class="thumb ${i === selectedIndex ? "active" : ""}" data-index="${i}" aria-label="View media ${i + 1}">
-          <img src="${item.type === "video" ? (item.poster || item.src) : item.src}" alt="${item.alt}">
-          ${item.type === "video" ? '<span class="thumb-badge">▶</span>' : ""}
-        </button>
-      `).join("");
+      function renderThumbs() {
+        thumbs.innerHTML = allMedia.map((item, i) => `
+          <button class="thumb ${i === selectedIndex ? "active" : ""}" data-index="${i}" aria-label="View media ${i + 1}">
+            <img src="${item.type === "video" ? (item.poster || item.src) : item.src}" alt="${item.alt}">
+            ${item.type === "video" ? '<span class="thumb-badge">▶</span>' : ""}
+          </button>
+        `).join("");
 
-      thumbs.querySelectorAll(".thumb").forEach(btn => {
-        btn.addEventListener("click", () => {
-          selectedIndex = Number(btn.dataset.index);
-          renderMain();
+        thumbs.querySelectorAll(".thumb").forEach(btn => {
+          btn.addEventListener("click", () => {
+            selectedIndex = Number(btn.dataset.index);
+            renderMain();
+          });
         });
-      });
-    }
-
-    function renderMain() {
-      if (!allMedia.length) return;
-      const current = allMedia[selectedIndex];
-
-      if (current.type === "video") {
-        mainMedia.innerHTML = `
-          <video class="main-image" controls playsinline poster="${current.poster || ""}">
-            <source src="${current.src}" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>`;
-      } else {
-        mainMedia.innerHTML = `
-          <img class="main-image" src="${current.src}" alt="${current.alt}" />`;
       }
 
-      renderThumbs();
-    }
+      function renderMain() {
+        if (!allMedia.length) {
+          mainMedia.innerHTML = `<div class="no-media">No media available</div>`;
+          return;
+        }
 
-    function move(step) {
-      if (!allMedia.length) return;
-      selectedIndex = (selectedIndex + step + allMedia.length) % allMedia.length;
+        const current = allMedia[selectedIndex];
+
+        if (current.type === "video") {
+          mainMedia.innerHTML = `
+            <video class="main-image" controls playsinline poster="${current.poster || ""}">
+              <source src="${current.src}" type="video/mp4">
+            </video>
+          `;
+        } else {
+          mainMedia.innerHTML = `
+            <img class="main-image" src="${current.src}" alt="${current.alt}">
+          `;
+        }
+
+        renderThumbs();
+      }
+
+      function move(step) {
+        if (!allMedia.length) return;
+        selectedIndex = (selectedIndex + step + allMedia.length) % allMedia.length;
+        renderMain();
+      }
+
+      document.querySelector(".img-nav.prev")?.addEventListener("click", () => move(-1));
+      document.querySelector(".img-nav.next")?.addEventListener("click", () => move(1));
+
       renderMain();
     }
-
-    document.querySelector(".img-nav.prev").addEventListener("click", () => move(-1));
-    document.querySelector(".img-nav.next").addEventListener("click", () => move(1));
-
-    document.querySelectorAll(".size-option").forEach((button) => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".size-option").forEach((b) => b.classList.remove("active"));
-        button.classList.add("active");
-      });
-    });
-
-    document.querySelector(".add-to-cart-detail").addEventListener("click", () => {
-      const size = document.querySelector(".size-option.active").dataset.size;
-      const price = basePrice + (size === "A3" ? 700 : size === "A2" ? 1550 : 0);
-      const cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
-      cart.push({ ...product, size, price, lineId: `${product.id}-${size}-${Date.now()}` });
-      localStorage.setItem("ajna-cart", JSON.stringify(cart));
-      alert("Added to bag");
-    });
-
-    renderMain();
   }
 </script>

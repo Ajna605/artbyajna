@@ -41,15 +41,23 @@ const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]"
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
 
 function renderProducts() {
+  const openProductPage = (productId) => {
+    window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
+  };
+
   document.getElementById("product-grid").innerHTML = products.map((product) => `
     <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
       <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
     </article>`).join("");
+
   document.querySelectorAll(".product-card").forEach((card) => {
-    card.addEventListener("click", () => showProduct(card.dataset.product));
+    card.addEventListener("click", () => openProductPage(card.dataset.product));
     card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showProduct(card.dataset.product); }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openProductPage(card.dataset.product);
+      }
     });
   });
 }

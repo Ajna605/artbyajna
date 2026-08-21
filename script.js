@@ -2,9 +2,10 @@ const products = [
   {
     id: "Fazalux Magasin",
     title: "Fazalux Magasin",
+    category: "Mauritius Street Scene",
     price: 250,
     size: "A3 (29.7 × 42 cm)",
-    paper: "310gsm archival matte paper",
+    paper: "Munken Pure 240gsm matte paper",
     image: "images/fazalux/chatty-fazalux-front.png",
     images: [
       { type: "image", src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
@@ -15,26 +16,35 @@ const products = [
     ],
     description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!"
   },
-  { id: "sunday-lemons", title: "Infinity Papaya", category: "Still life", price: 250, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
-    { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
-    { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },
-    { src: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print in a warm, sunlit interior" }
-  ], description: "A small celebration of slow mornings and sunlight on the table. This cheerful still life is full of soft texture and golden warmth." },
-  { id: "after-the-rain", title: "Tractor Monkeys", category: "Island landscape", price: 250, image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=85", images: [
-    { src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print with a luminous green island landscape" },
-    { src: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print detail showing layered tropical greens" },
-    { src: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1200&q=85", alt: "After the Rain print displayed with a view of misty hills" }
-  ], description: "The rich green quiet that arrives after a tropical shower, with a glimpse of light opening over the hills." },
-  { id: "bougainvillea", title: "Calm boat", category: "Botanical study", price: 250, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
-    { src: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print with loose pink petals and green leaves" },
-    { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print detail showing layered botanical colour" },
-    { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print styled with delicate flowering branches" }
-  ], description: "An ode to the generous colour of island gardens. Loose petals and leafy shadows make this an easy, uplifting companion." },
-   { id: "bougainvillea", title: "The Red Church", category: "Botanical study", price: 250, image: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=900&q=85", images: [
-    { src: "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print with loose pink petals and green leaves" },
-    { src: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print detail showing layered botanical colour" },
-    { src: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=1200&q=85", alt: "Bougainvillea print styled with delicate flowering branches" }
-  ], description: "An ode to the generous colour of island gardens. Loose petals and leafy shadows make this an easy, uplifting companion." }
+  { id: "Calm boat", title: "Calm boat", category: "Mauritius Seascape", price: 250, image: "images/calm_boat/01_front.jpg", images: [
+    { type: "image", src: "images/calm_boat/02_framed.png", alt: "Calm boat print with a luminous green island landscape" },
+    { type: "image", src: "images/calm_boat/02_detail.jpg", alt: "Calm boat print detail showing layered tropical greens" },
+    { type: "image", src: "images/calm_boat/03_styled_shells.jpg", alt: "Calm boat print displayed with a view of misty hills" },
+    { type: "image", src: "images/calm_boat/05_back.jpg", alt: "Calm boat print displayed with a view of misty hills" },
+    { type: "video", src: "images/calm_boat/showflip.mp4", poster: "images/calm_boat/01_front.jpg", alt: "Calm boat print displayed in video" }
+  ], description: "A boat rests calmly on the serene waters of Mauritius. Location Unknown" },
+  { id: "infinity-papaya",
+    title: "Infinity Papaya", category: "Mauritius Food Scene", price: 250, image: "images/papaya/01_front.jpg", images: [
+    { type: "image", src: "images/papaya/03_framed.jpg", alt: "Infinity Papaya print with a golden citrus still life" },
+    { type: "image", src: "images/papaya/02_detail.jpg", alt: "Infinity Papaya print detail with sunlit yellow fruit" },
+    { type: "image", src: "images/papaya/04_styled_shells.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" },
+    { type: "image", src: "images/papaya/05_back.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" },
+    { type: "video", src: "images/papaya/showflip.mp4", poster: "images/papaya/04_styled_shells.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" }
+  ], description: "Something we are all used to seeing and are often blessed to taste - papaya from below." },
+  { id: "Tractor Monkeys", title: "Tractor Monkeys", category: "Mauritius Street Scene", price: 250, image: "images/tractor_monkeys/01_front.png", images: [
+    { type: "image", src: "images/tractor_monkeys/04_frame.png", alt: "Tractor Monkeys print with a luminous green island landscape" },
+    { type: "image", src: "images/tractor_monkeys/02_detail_closeup.jpg", alt: "Tractor Monkeys print detail showing layered tropical greens" },
+    { type: "image", src: "images/tractor_monkeys/03_shell.png", alt: "Tractor Monkeys print displayed with a view of misty hills" },
+    { type: "image", src: "images/tractor_monkeys/05_back.png", alt: "Tractor Monkeys print displayed with a view of misty hills" },
+    { type: "video", src: "images/tractor_monkeys/showflip2.mp4", poster: "images/tractor_monkeys/01_front.png", alt: "Tractor Monkeys print displayed in video" }
+  ], description: "These Monkeys have found a home by the Curepipe Bazar. Often fed by the locals, they loiter on this tractor all day long"},
+  { id: "the-red-church", title: "The Red Church", category: "Mauritius Seascape", price: 250, image: "images/red_church/01_front.png", images: [
+    { type: "image", src: "images/red_church/03_detail.png", alt: "The Red Church print with loose pink petals and green leaves" },
+    { type: "image", src: "images/red_church/03_detail.png", alt: "The Red Church print detail showing layered botanical colour" },
+    { type: "image", src: "images/red_church/04_shell.png", alt: "The Red Church print styled with delicate flowering branches" },
+    { type: "image", src: "images/red_church/05_back.png", alt: "The Red Church print styled with delicate flowering branches" },
+    { type: "video", src: "images/red_church/showflip2.mp4", poster: "images/red_church/01_front.png", alt: "The Red Church print styled with delicate flowering branches" }
+  ], description: "The iconic church of Cap Malheureux captured with the beautiful azure sea in front of it. " }
 ];
 let cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
 let selectedProduct = null;
@@ -144,7 +154,7 @@ function showProduct(id) {
       <p class="sr-only" id="gallery-status" aria-live="polite"></p>
     </div>
     <div><p class="eyebrow">${selectedProduct.category}</p><h2>${selectedProduct.title}</h2><p class="price">From ${formatPrice(selectedProduct.price)}</p><p class="description">${selectedProduct.description}</p>
-    <div class="detail-row"><label>Choose your size</label><div class="sizes"><button class="size-option active" data-size="A4">A4 &middot; ${formatPrice(selectedProduct.price)}</button><button class="size-option" data-size="A3">A3 &middot; ${formatPrice(selectedProduct.price + 700)}</button><button class="size-option" data-size="A2">A2 &middot; ${formatPrice(selectedProduct.price + 1550)}</button></div></div>
+    <div class="detail-row"><label>Choose your size</label><div class="sizes"><button class="size-option active" data-size="A6">A6 &middot; ${formatPrice(selectedProduct.price)}</button><button class="size-option" data-size="A5">A5 &middot; ${formatPrice(selectedProduct.price + 250)}</button><button class="size-option" data-size="A4">A4 &middot; ${formatPrice(selectedProduct.price + 300)}</button></div></div>
     <div class="detail-row"><label>Paper</label><p>310gsm textured archival fine-art paper</p></div><div class="detail-row">
     <div class="detail-row"><label>Shipping costs</label><p>Local and international postage cost an extra Rs 50 and Rs 200 respectively.</p></div><div class="detail-row">
     <label>Preparation time</label><p>Made to order in 5–8 business days</p></div>

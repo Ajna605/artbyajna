@@ -145,18 +145,20 @@ function showCheckout() {
   <label class="full">Message<textarea optional name="message" placeholder="Tell me more about your order"></textarea></label>
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
-  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option>Local(Mauritius) bank transfer</option><option>International bank transfer</option><option>JUICE payment</option></select></label><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
+  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option>Local(Mauritius) bank transfer</option><option>International bank transfer</option><option>JUICE payment</option></select></label><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="submit">Already paid? I have made the transfer <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
   document.getElementById("checkout-form").addEventListener("submit", submitOrder);
 }
 
 function submitOrder(event) {
   event.preventDefault();
+  const btn = document.getElementById("confirm-transfer-btn");
+  if (btn) { btn.textContent = "Awaiting verification"; btn.disabled = true; }
   const form = new FormData(event.target), reference = `AJNA-${Math.floor(1000 + Math.random() * 9000)}`;
-  const order = { reference, status: "Pending Confirmation", name: `${form.get("firstName")} ${form.get("lastName")}`, email: form.get("email"), phone: form.get("phone"), address: form.get("address"), country: form.get("country"), payment: form.get("payment"), products: cart, date: new Date().toLocaleDateString("en-GB") };
+  const order = { reference, status: "Awaiting verification", name: `${form.get("firstName")} ${form.get("lastName")}`, email: form.get("email"), phone: form.get("phone"), address: form.get("address"), country: form.get("country"), payment: form.get("payment"), products: cart, date: new Date().toLocaleDateString("en-GB"), message: "Customer confirmed bank transfer via checkout." };
   const orders = savedOrders(); orders.push(order); saveOrders(orders); cart = []; saveCart();
   fetch("/api/order-notification", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(order) }).catch(() => {});
-  document.getElementById("checkout-content").innerHTML = `<div class="confirmation"><p class="eyebrow">Order submitted</p><h2>Thank you, ${order.name.split(" ")[0]}.</h2><p>Your order reference is</p><p class="reference">${reference}</p><span class="status">Pending confirmation</span><p>I'll be in touch personally to confirm availability, delivery costs, and private payment instructions. Your order is not final until payment has been received.</p><button class="button button-dark close-confirmation">Continue browsing <span>→</span></button></div>`;
+  document.getElementById("checkout-content").innerHTML = `<div class="confirmation"><p class="eyebrow">Transfer claimed</p><h2>Thank you, ${order.name.split(" ")[0]}.</h2><p>Your order reference is</p><p class="reference">${reference}</p><span class="status">Awaiting verification</span><p>I'll verify your payment and be in touch shortly to confirm your order.</p><button class="button button-dark close-confirmation">Continue browsing <span>→</span></button></div>`;
   document.querySelector(".close-confirmation").addEventListener("click", closeModals);
 }
 
@@ -173,7 +175,7 @@ function orderCard(order) { return `<div class="order-card"><div class="order-ca
 function showStudioOrders() {
   const accountContent = document.getElementById("account-content");
   if (!accountContent) return;
-  const orders = savedOrders(), statuses = ["Pending Confirmation", "Order received", "Awaiting payment", "Payment received", "Print being prepared", "Shipped", "Delivered"];
+  const orders = savedOrders(), statuses = ["Pending Confirmation", "Awaiting verification", "Order received", "Awaiting payment", "Payment received", "Print being prepared", "Shipped", "Delivered"];
   accountContent.innerHTML = `<p class="eyebrow">Private studio view</p><h2>Order desk</h2><p>Update an order after reviewing availability, delivery, and payment.</p>${orders.length ? orders.map((order) => `<div class="order-card"><div class="order-card-head"><strong>${order.reference}</strong><span class="status">${order.status}</span></div><p>${order.name} &middot; ${order.country}<br />${order.products.map((product) => `${product.title} (${product.size})`).join(", ")}</p><label class="sr-only" for="status-${order.reference}">Order status</label><select class="status-select" id="status-${order.reference}" data-reference="${order.reference}">${statuses.map((status) => `<option ${status === order.status ? "selected" : ""}>${status}</option>`).join("")}</select></div>`).join("") : `<div class="order-card"><strong>No orders to manage yet.</strong></div>`}`;
   document.querySelectorAll(".status-select").forEach((select) => select.addEventListener("change", () => {
     const updatedOrders = savedOrders().map((order) => order.reference === select.dataset.reference ? { ...order, status: select.value } : order);

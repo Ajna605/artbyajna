@@ -50,21 +50,31 @@ const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]"
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
 const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#39;");
 const paymentMethodDetails = {
-  "Bank Transfer": {
-    title: "Bank Transfer details",
+  "Bank Transfer (Local - Mauritius)": {
+    title: "Bank Transfer — Local (Mauritius)",
     fields: [
-      ["Bank Name", "Example National Bank"],
-      ["Account Name", "Art by Ajna Ltd"],
-      ["Account Number", "0123456789"],
-      ["Branch Code", "001"],
+      ["Bank Name", "Mauritius Commercial Bank (MCB)"],
+      ["Account Name", "Art by Ajna"],
+      ["Account Number", "000123456789"],
+      ["Branch Code", "MCB001"],
+      ["Reference", "Use your order number"]
+    ]
+  },
+  "Bank Transfer (International)": {
+    title: "Bank Transfer — International",
+    fields: [
+      ["Bank Name", "Mauritius Commercial Bank (MCB)"],
+      ["Account Name", "Art by Ajna"],
+      ["IBAN / Account Number", "— to be provided on confirmation —"],
+      ["SWIFT / BIC", "MCBLMUMU"],
       ["Reference", "Use your order number"]
     ]
   },
   "Juice Payment": {
-    title: "Juice Payment details",
+    title: "Juice Payment (Mauritius only)",
     fields: [
       ["Wallet Name", "Art by Ajna"],
-      ["Juice Number", "+1 (555) 123-4567"],
+      ["Juice Number", "+230 5XXX XXXX"],
       ["Payment Reference", "Use your order number"],
       ["Note", "Send payment screenshot after transfer"]
     ]
@@ -190,7 +200,7 @@ function showCheckout() {
   <label class="full">Message<textarea optional name="message" placeholder="Tell me more about your order"></textarea></label>
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
-  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer - for Mauritius and International">Bank Transfer - for Mauritius and International</option><option value="Juice Payment - Mauritius Only">Juice Payment - Mauritius Only</option></select></label>
+  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer (Local - Mauritius)">Bank Transfer — Local (Mauritius)</option><option value="Bank Transfer (International)">Bank Transfer — International</option><option value="Juice Payment">Juice Payment (Mauritius only)</option></select></label>
   <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="button">Already paid? I have made the transfer <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
   const paymentSelect = document.querySelector('#checkout-form select[name="payment"]');

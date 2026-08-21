@@ -1,11 +1,20 @@
 const products = [
-  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "Mauritius Daily", price: 250, image: "images/fazalux/chatty-fazalux-front.png", images: [
-    { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
-    { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
-    { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
-  ], description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!" },
+  {
+    id: "Fazalux Magasin",
+    title: "Fazalux Magasin",
+    price: 250,
+    size: "A3 (29.7 × 42 cm)",
+    paper: "310gsm archival matte paper",
+    image: "images/fazalux/chatty-fazalux-front.png",
+    images: [
+      { type: "image", src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
+      { type: "image", src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
+      { type: "video", src: "images/fazalux/showflip.mp4", poster: "images/fazalux/chatty-fazalux-front.png", alt: "Painting process video" }
+    ],
+    description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!"
+  },
   { id: "sunday-lemons", title: "Infinity Papaya", category: "Still life", price: 250, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
     { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },
@@ -39,17 +48,63 @@ const openModal = (id) => {
 const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); });
 const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]");
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
+const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#39;");
+const paymentMethodDetails = {
+  "Bank Transfer (Local - Mauritius)": {
+    title: "Bank Transfer — Local (Mauritius)",
+    fields: [
+      ["Bank Name", "Mauritius Commercial Bank (MCB)"],
+      ["Account Name", "Art by Ajna"],
+      ["Account Number", "000123456789"],
+      ["Branch Code", "MCB001"],
+      ["Reference", "Use your order number"]
+    ]
+  },
+  "Bank Transfer (International)": {
+    title: "Bank Transfer — International",
+    fields: [
+      ["Bank Name", "Mauritius Commercial Bank (MCB)"],
+      ["Account Name", "Art by Ajna"],
+      ["IBAN / Account Number", "— to be provided on confirmation —"],
+      ["SWIFT / BIC", "MCBLMUMU"],
+      ["Reference", "Use your order number"]
+    ]
+  },
+  "Juice Payment": {
+    title: "Juice Payment (Mauritius only)",
+    fields: [
+      ["Wallet Name", "Art by Ajna"],
+      ["Juice Number", "+230 5XXX XXXX"],
+      ["Payment Reference", "Use your order number"],
+      ["Note", "Send payment screenshot after transfer"]
+    ]
+  }
+};
+
+function renderPaymentDetails(method) {
+  const details = paymentMethodDetails[method];
+  if (!details) return "<p class=\"payment-details-placeholder\">Select a payment method to view details.</p>";
+  return `<h3>${escapeHtml(details.title)}</h3><dl class="payment-details-list">${details.fields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>`;
+}
 
 function renderProducts() {
+  const openProductPage = (productId) => {
+    window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
+  };
+
   document.getElementById("product-grid").innerHTML = products.map((product) => `
     <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
       <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
     </article>`).join("");
+
   document.querySelectorAll(".product-card").forEach((card) => {
-    card.addEventListener("click", () => showProduct(card.dataset.product));
+    card.addEventListener("click", () => openProductPage(card.dataset.product));
     card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showProduct(card.dataset.product); }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openProductPage(card.dataset.product);
+      }
     });
   });
 }
@@ -145,9 +200,45 @@ function showCheckout() {
   <label class="full">Message<textarea optional name="message" placeholder="Tell me more about your order"></textarea></label>
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
-  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option>Local(Mauritius) bank transfer</option><option>International bank transfer</option><option>JUICE payment</option></select></label><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
+  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer (Local - Mauritius)">Bank Transfer — Local (Mauritius)</option><option value="Bank Transfer (International)">Bank Transfer — International</option><option value="Juice Payment">Juice Payment (Mauritius only)</option></select></label>
+  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="button">Already paid? I have made the transfer <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
+  const paymentSelect = document.querySelector('#checkout-form select[name="payment"]');
+  const paymentDetails = document.getElementById("payment-details-panel");
+  if (paymentSelect && paymentDetails) paymentSelect.addEventListener("change", () => { paymentDetails.innerHTML = renderPaymentDetails(paymentSelect.value); });
   document.getElementById("checkout-form").addEventListener("submit", submitOrder);
+  document.getElementById("confirm-transfer-btn").addEventListener("click", () => {
+    const form = document.getElementById("checkout-form");
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const data = new FormData(form);
+    const orderData = {
+      customerName: `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim(),
+      customerEmail: data.get("email") || "",
+      phone: data.get("phone") || "",
+      payment: data.get("payment") || "",
+      products: cart,
+      message: "Customer clicked 'I have made the transfer'.",
+      status: "Awaiting verification",
+      confirmedAt: new Date().toISOString(),
+    };
+    handlePaymentConfirmation(orderData);
+  });
+}
+
+async function handlePaymentConfirmation(orderData) {
+  const btn = document.getElementById("confirm-transfer-btn");
+  if (btn) { btn.textContent = "Awaiting verification"; btn.disabled = true; }
+  const reference = `AJNA-${Math.floor(1000 + Math.random() * 9000)}`;
+  const order = { reference, status: "Awaiting verification", name: orderData.customerName, email: orderData.customerEmail, phone: orderData.phone, payment: orderData.payment, products: orderData.products, date: new Date().toLocaleDateString("en-GB") };
+  const orders = savedOrders(); orders.push(order); saveOrders(orders); cart = []; saveCart();
+  try {
+    const res = await fetch("/api/payment-confirmed", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...order, ...orderData }) });
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+  } catch (err) {
+    console.error("Failed to send payment confirmation:", err);
+  }
+  document.getElementById("checkout-content").innerHTML = `<div class="confirmation"><p class="eyebrow">Transfer noted</p><h2>Thank you, ${escapeHtml(order.name.split(" ")[0])}.</h2><p>Your order reference is</p><p class="reference">${reference}</p><span class="status">Awaiting verification</span><p>I'll verify your payment and be in touch personally to confirm your order and arrange delivery.</p><button class="button button-dark close-confirmation">Continue browsing <span>→</span></button></div>`;
+  document.querySelector(".close-confirmation").addEventListener("click", closeModals);
 }
 
 function submitOrder(event) {
@@ -199,3 +290,4 @@ if (newsletterForm) newsletterForm.addEventListener("submit", (event) => { event
 if (document.getElementById("product-grid")) { renderProducts(); saveCart(); }
 if (location.hash === "#tracking") openModal("tracking-modal");
 if (location.hash === "#policies") openModal("policies-modal");
+if (location.hash === "#bag") { renderCart(); openModal("cart-modal"); history.replaceState(null, "", location.pathname); }

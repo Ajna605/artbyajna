@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="section product-page">
+    <a class="underlined-link back-link" href="shop.html">← Back to shop</a>
+    <section id="product-detail"></section>
+  </main>
+
+  <!-- Mini-cart drawer -->
+  <div class="minicart-overlay" id="minicart-overlay" aria-hidden="true"></div>
+  <aside class="minicart-drawer" id="minicart-drawer" role="dialog" aria-modal="true" aria-label="Mini cart" aria-hidden="true">
+    <div class="minicart-header">
+      <h2>Your bag</h2>
+      <button class="minicart-close" id="minicart-close" aria-label="Close mini cart">&times;</button>
+    </div>
+    <p class="minicart-added-note">✓ Item added to bag</p>
+    <div id="minicart-item" class="minicart-item"></div>
+    <div class="minicart-footer">
+      <a href="index.html#bag" class="minicart-btn-bag" id="minicart-view-bag">View bag <span>→</span></a>
+      <button class="minicart-btn-continue" id="minicart-continue">Continue shopping</button>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
+  <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("product-detail");
+  if (!container) return;
+
+  const id = new URLSearchParams(window.location.search).get("id");
+  if (typeof products === "undefined" || !Array.isArray(products)) {
+    container.innerHTML = "<p>Products data failed to load.</p>";
+    return;
+  }
+
+  const product = products.find(p => String(p.id) === String(id));
+  if (!product) {
+    container.innerHTML = "<p>Product not found.</p>";
+    return;
+  }
+
+  const basePrice = Number(product.price) || 0;
+
+  // Build media list: main image + additional images/videos
+  const allMedia = [
+    ...(product.image ? [{ type: "image", src: product.image, alt: product.title || "Artwork" }] : []),
+    ...(Array.isArray(product.images) ? product.images : [])
+  ]
+    .map(item => ({
+      type: item?.type === "video" ? "video" : "image",
+      src: item?.src || "",
+      alt: item?.alt || product.title || "Artwork",
+      poster: item?.poster || ""
+    }))
+    .filter(item => item.src);
+
+  let selectedIndex = 0;
+
+  container.innerHTML = `
+    <div class="product-two-col">
+      <!-- LEFT -->
+      <div class="gallery-col">
+        <div id="thumbs" class="thumbs"></div>
+        <div class="main-image-wrap">
+          <div id="main-media" class="main-media"></div>
+          <button class="img-nav prev" type="button" aria-label="Previous media">←</button>
+          <button class="img-nav next" type="button" aria-label="Next media">→</button>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="details-col">
+        <p class="eyebrow">${product.category || ""}</p>
+        <h1 class="product-title">${product.title || ""}</h1>
+        <p class="price">From Rs ${basePrice.toLocaleString("en-MU")}</p>
+        <p class="description">${product.description || ""}</p>
+
+        <div class="detail-row">
+          <label>Choose your size</label>
+          <div class="sizes">
+            <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
+            <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
+            <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <label>Paper</label>
+          <p>${product.paper || "240gsm textured archival fine-art paper"}</p>
+        </div>
+
+        <div class="detail-row">
+          <label>Shipping costs</label>
+          <p>${product.shipping || "Local and international postage cost an extra Rs 50 and Rs 200 respectively. Ships in 3–5 business days."}</p>
+        </div>
+
+        <button class="button button-dark add-to-cart-detail">Add to bag <span>→</span></button>
+      </div>
+    </div>
+  `;
+
+  const thumbs = document.getElementById("thumbs");
+  const mainMedia = document.getElementById("main-media");
+
+  function renderThumbs() {
+    thumbs.innerHTML = allMedia.map((item, i) => `
+      <button class="thumb ${i === selectedIndex ? "active" : ""}" data-index="${i}" aria-label="View media ${i + 1}">
+        <img src="${item.type === "video" ? (item.poster || item.src) : item.src}" alt="${item.alt}">
+        ${item.type === "video" ? '<span class="thumb-badge">▶</span>' : ""}
+      </button>
+    `).join("");
+
+    thumbs.querySelectorAll(".thumb").forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectedIndex = Number(btn.dataset.index);
+        renderMain();
+      });
+    });
+  }
+
+  function renderMain() {
+    if (!allMedia.length) {
+      mainMedia.innerHTML = `<div class="no-media">No media available</div>`;
+      return;
+    }
+
+    const current = allMedia[selectedIndex];
+    if (current.type === "video") {
+      mainMedia.innerHTML = `
+        <video class="main-image" controls playsinline poster="${current.poster || ""}">
+          <source src="${current.src}" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      `;
+    } else {
+      mainMedia.innerHTML = `<img class="main-image" src="${current.src}" alt="${current.alt}">`;
+    }
+
+    renderThumbs();
+  }
+
+  function move(step) {
+    if (!allMedia.length) return;
+    selectedIndex = (selectedIndex + step + allMedia.length) % allMedia.length;
+    renderMain();
+  }
+
+  document.querySelector(".img-nav.prev")?.addEventListener("click", () => move(-1));
+  document.querySelector(".img-nav.next")?.addEventListener("click", () => move(1));
+
+  document.querySelectorAll(".size-option").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".size-option").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+    });
+  });
+
+  document.querySelector(".add-to-cart-detail")?.addEventListener("click", () => {
+    const size = document.querySelector(".size-option.active")?.dataset.size || "A4";
+    const price = basePrice + (size === "A3" ? 700 : size === "A2" ? 1550 : 0);
+    const cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
+    cart.push({ ...product, size, price, lineId: `${product.id}-${size}-${Date.now()}` });
+    localStorage.setItem("ajna-cart", JSON.stringify(cart));
+
+    // Update bag count in header (if present on page)
+    document.querySelectorAll(".cart-count").forEach(el => { el.textContent = cart.length; });
+
+    // Build mini-cart item display
+    const itemEl = document.getElementById("minicart-item");
+    if (itemEl) {
+      const imgSrc = product.image || (Array.isArray(product.images) && product.images[0]?.src) || "";
+      const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      itemEl.innerHTML = `
+        ${imgSrc ? `<img class="minicart-item-img" src="${esc(imgSrc)}" alt="${esc(product.title || "Artwork")}">` : ""}
+        <div class="minicart-item-info">
+          <p class="minicart-item-name">${esc(product.title || "")}</p>
+          <p class="minicart-item-meta">Size: ${esc(size)} &nbsp;·&nbsp; Qty: 1</p>
+          <p class="minicart-item-price">Rs ${esc(price.toLocaleString("en-MU"))}</p>
+        </div>
+      `;
+      if (!imgSrc) itemEl.style.gridTemplateColumns = "1fr";
+    }
+
+    // Open drawer
+    const overlay = document.getElementById("minicart-overlay");
+    const drawer = document.getElementById("minicart-drawer");
+    if (overlay && drawer) {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      drawer.classList.add("open");
+      drawer.setAttribute("aria-hidden", "false");
+      document.getElementById("minicart-close")?.focus();
+    }
+  });
+
+  // Mini-cart close logic
+  function closeMiniCart() {
+    const overlay = document.getElementById("minicart-overlay");
+    const drawer = document.getElementById("minicart-drawer");
+    if (overlay && drawer) {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      drawer.classList.remove("open");
+      drawer.setAttribute("aria-hidden", "true");
+      document.querySelector(".add-to-cart-detail")?.focus();
+    }
+  }
+
+  document.getElementById("minicart-close")?.addEventListener("click", closeMiniCart);
+  document.getElementById("minicart-overlay")?.addEventListener("click", closeMiniCart);
+  document.getElementById("minicart-continue")?.addEventListener("click", closeMiniCart);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.getElementById("minicart-drawer")?.classList.contains("open")) {
+      closeMiniCart();
+    }
+  });
+
+  renderMain();
+});
+</script>
+</body>
+</html>

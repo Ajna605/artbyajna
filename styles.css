@@ -268,3 +268,10 @@ footer
 .minicart-btn-continue:hover{border-color:var(--brand-teal);color:var(--brand-teal)}
 @media(max-width:480px){.minicart-drawer{width:100vw}}
 
+.payment-details-panel{border:1px solid var(--line);background:var(--brand-blue-soft);padding:16px}
+.payment-details-panel h3{font:500 21px/1.2 "Playfair Display",serif;margin:0 0 12px;color:var(--brand-blue)}
+.payment-details-list{display:grid;grid-template-columns:minmax(140px,auto) 1fr;gap:8px 12px;margin:0}
+.payment-details-list dt{font:11px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--brand-teal)}
+.payment-details-list dd{margin:0;color:var(--brand-blue);font-size:13px}
+.payment-details-placeholder{margin:0;color:var(--muted);font-size:13px}
+@media(max-width:800px){.payment-details-list{grid-template-columns:1fr}}

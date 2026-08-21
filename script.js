@@ -48,6 +48,7 @@ const openModal = (id) => {
 const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); });
 const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]");
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
+const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#39;");
 const paymentMethodDetails = {
   "Bank Transfer": {
     title: "Bank Transfer details",
@@ -73,7 +74,7 @@ const paymentMethodDetails = {
 function renderPaymentDetails(method) {
   const details = paymentMethodDetails[method];
   if (!details) return "<p class=\"payment-details-placeholder\">Select a payment method to view details.</p>";
-  return `<h3>${details.title}</h3><dl class="payment-details-list">${details.fields.map(([label, value]) => `<dt>${label}</dt><dd>${value}</dd>`).join("")}</dl>`;
+  return `<h3>${escapeHtml(details.title)}</h3><dl class="payment-details-list">${details.fields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>`;
 }
 
 function renderProducts() {
@@ -190,7 +191,7 @@ function showCheckout() {
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
   <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer">Bank Transfer</option><option value="Juice Payment">Juice Payment</option></select></label>
-  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
+  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
   const paymentSelect = document.querySelector('#checkout-form select[name="payment"]');
   const paymentDetails = document.getElementById("payment-details-panel");

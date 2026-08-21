@@ -1,11 +1,20 @@
 const products = [
-  { id: "Fazalux Magasin", title: "Fazalux Magasin", category: "Mauritius Daily", price: 250, image: "images/fazalux/chatty-fazalux-front.png", images: [
-    { src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
-    { src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
-    { src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
-    { src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" }
-  ], description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!" },
+  {
+    id: "Fazalux Magasin",
+    title: "Fazalux Magasin",
+    price: 250,
+    size: "A3 (29.7 × 42 cm)",
+    paper: "310gsm archival matte paper",
+    image: "images/fazalux/chatty-fazalux-front.png",
+    images: [
+      { type: "image", src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-left.jpg", alt: "Fazalux Magasin zoom left" },
+      { type: "image", src: "images/fazalux/fazalux-zoom-right.jpg", alt: "Fazalux Magasin zoom right" },
+      { type: "image", src: "images/fazalux/chatty-fazalux-shell.png", alt: "Fazalux Magasin shell view" },
+      { type: "video", src: "images/fazalux/showflip.mp4", poster: "images/fazalux/chatty-fazalux-front.png", alt: "Painting process video" }
+    ],
+    description: "Classic Tabagie of Mauritius in Curepipe - where pots are sold and you can also get a haircut!"
+  },
   { id: "sunday-lemons", title: "Infinity Papaya", category: "Still life", price: 250, image: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=900&q=85", images: [
     { src: "https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print with a golden citrus still life" },
     { src: "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=1200&q=85", alt: "Sunday Lemons print detail with sunlit yellow fruit" },
@@ -39,17 +48,53 @@ const openModal = (id) => {
 const closeModals = () => document.querySelectorAll(".modal").forEach((modal) => { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); });
 const savedOrders = () => JSON.parse(localStorage.getItem("ajna-orders") || "[]");
 const saveOrders = (orders) => localStorage.setItem("ajna-orders", JSON.stringify(orders));
+const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll("\"", "&quot;").replaceAll("'", "&#39;");
+const paymentMethodDetails = {
+  "Bank Transfer": {
+    title: "Bank Transfer details",
+    fields: [
+      ["Bank Name", "Example National Bank"],
+      ["Account Name", "Art by Ajna Ltd"],
+      ["Account Number", "0123456789"],
+      ["Branch Code", "001"],
+      ["Reference", "Use your order number"]
+    ]
+  },
+  "Juice Payment": {
+    title: "Juice Payment details",
+    fields: [
+      ["Wallet Name", "Art by Ajna"],
+      ["Juice Number", "+1 (555) 123-4567"],
+      ["Payment Reference", "Use your order number"],
+      ["Note", "Send payment screenshot after transfer"]
+    ]
+  }
+};
+
+function renderPaymentDetails(method) {
+  const details = paymentMethodDetails[method];
+  if (!details) return "<p class=\"payment-details-placeholder\">Select a payment method to view details.</p>";
+  return `<h3>${escapeHtml(details.title)}</h3><dl class="payment-details-list">${details.fields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>`;
+}
 
 function renderProducts() {
+  const openProductPage = (productId) => {
+    window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
+  };
+
   document.getElementById("product-grid").innerHTML = products.map((product) => `
     <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
       <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
     </article>`).join("");
+
   document.querySelectorAll(".product-card").forEach((card) => {
-    card.addEventListener("click", () => showProduct(card.dataset.product));
+    card.addEventListener("click", () => openProductPage(card.dataset.product));
     card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); showProduct(card.dataset.product); }
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openProductPage(card.dataset.product);
+      }
     });
   });
 }
@@ -145,8 +190,12 @@ function showCheckout() {
   <label class="full">Message<textarea optional name="message" placeholder="Tell me more about your order"></textarea></label>
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
-  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option>Local(Mauritius) bank transfer</option><option>International bank transfer</option><option>JUICE payment</option></select></label><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="submit">Already paid? I have made the transfer <span>→</span></button></form>`;
+  <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer - for Mauritius and International">Bank Transfer - for Mauritius and International</option><option value="Juice Payment - Mauritius Only">Juice Payment - Mauritius Only</option></select></label>
+  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="submit">Already paid? I have made the transfer <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
+  const paymentSelect = document.querySelector('#checkout-form select[name="payment"]');
+  const paymentDetails = document.getElementById("payment-details-panel");
+  if (paymentSelect && paymentDetails) paymentSelect.addEventListener("change", () => { paymentDetails.innerHTML = renderPaymentDetails(paymentSelect.value); });
   document.getElementById("checkout-form").addEventListener("submit", submitOrder);
 }
 
@@ -201,3 +250,4 @@ if (newsletterForm) newsletterForm.addEventListener("submit", (event) => { event
 if (document.getElementById("product-grid")) { renderProducts(); saveCart(); }
 if (location.hash === "#tracking") openModal("tracking-modal");
 if (location.hash === "#policies") openModal("policies-modal");
+if (location.hash === "#bag") { renderCart(); openModal("cart-modal"); history.replaceState(null, "", location.pathname); }

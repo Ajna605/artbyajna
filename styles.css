@@ -244,3 +244,27 @@ footer
 
 .footer-social-links{display:flex;align-items:center;gap:14px}.footer-social-links a{display:inline-flex;color:var(--brand-blue);transition:color .2s ease}.footer-social-links a:hover{color:var(--brand-teal)}.footer-social-links a:focus-visible{outline:2px solid var(--brand-teal);outline-offset:4px}.footer-social-links svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.footer-social-links a:last-child svg{fill:currentColor;stroke:none}
 
+/* ── Mini-cart drawer ─────────────────────────────────────────────────── */
+.minicart-overlay{position:fixed;inset:0;background:rgba(16,61,107,.35);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:40}
+.minicart-overlay.open{opacity:1;pointer-events:auto}
+.minicart-drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100vw);background:var(--paper);border-left:1px solid var(--line);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);z-index:41;overflow:hidden}
+.minicart-drawer.open{transform:translateX(0)}
+.minicart-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}
+.minicart-header h2{font:500 20px/1.1 "Playfair Display",serif;margin:0;color:var(--ink)}
+.minicart-close{border:0;background:none;font-size:24px;line-height:1;color:var(--brand-blue);cursor:pointer;padding:4px 6px}
+.minicart-close:hover{color:var(--brand-teal)}
+.minicart-close:focus-visible{outline:2px solid var(--brand-teal);outline-offset:2px}
+.minicart-added-note{font:11px "DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--brand-teal);padding:14px 24px 0}
+.minicart-item{display:grid;grid-template-columns:80px 1fr;gap:16px;padding:18px 24px;border-bottom:1px solid var(--line)}
+.minicart-item-img{width:80px;height:88px;object-fit:cover;display:block;flex-shrink:0}
+.minicart-item-info{display:flex;flex-direction:column;justify-content:center;gap:5px}
+.minicart-item-name{font:500 16px/1.25 "Playfair Display",serif;margin:0;color:var(--ink)}
+.minicart-item-meta{font:12px "DM Mono",monospace;color:var(--muted);margin:0}
+.minicart-item-price{font:13px "DM Mono",monospace;color:var(--brand-blue);margin:0}
+.minicart-footer{margin-top:auto;padding:20px 24px;display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line)}
+.minicart-btn-bag{display:flex;align-items:center;justify-content:space-between;gap:30px;padding:14px 18px;background:var(--brand-blue);color:#fff;border:0;font:500 12px "DM Sans",sans-serif;letter-spacing:.02em;cursor:pointer;text-decoration:none;width:100%}
+.minicart-btn-bag:hover{background:var(--brand-teal)}
+.minicart-btn-continue{display:flex;align-items:center;justify-content:center;padding:12px 18px;background:transparent;color:var(--brand-blue);border:1px solid var(--line);font:500 12px "DM Sans",sans-serif;letter-spacing:.02em;cursor:pointer;text-decoration:none;width:100%}
+.minicart-btn-continue:hover{border-color:var(--brand-teal);color:var(--brand-teal)}
+@media(max-width:480px){.minicart-drawer{width:100vw}}
+

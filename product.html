@@ -12,6 +12,21 @@
     <section id="product-detail"></section>
   </main>
 
+  <!-- Mini-cart drawer -->
+  <div class="minicart-overlay" id="minicart-overlay" aria-hidden="true"></div>
+  <aside class="minicart-drawer" id="minicart-drawer" role="dialog" aria-modal="true" aria-label="Mini cart" aria-hidden="true">
+    <div class="minicart-header">
+      <h2>Your bag</h2>
+      <button class="minicart-close" id="minicart-close" aria-label="Close mini cart">&times;</button>
+    </div>
+    <p class="minicart-added-note">✓ Item added to bag</p>
+    <div id="minicart-item" class="minicart-item"></div>
+    <div class="minicart-footer">
+      <a href="index.html#bag" class="minicart-btn-bag" id="minicart-view-bag">View bag <span>→</span></a>
+      <button class="minicart-btn-continue" id="minicart-continue">Continue shopping</button>
+    </div>
+  </aside>
+
   <script src="script.js"></script>
   <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -152,7 +167,59 @@ document.addEventListener("DOMContentLoaded", () => {
     const cart = JSON.parse(localStorage.getItem("ajna-cart") || "[]");
     cart.push({ ...product, size, price, lineId: `${product.id}-${size}-${Date.now()}` });
     localStorage.setItem("ajna-cart", JSON.stringify(cart));
-    alert("Added to bag");
+
+    // Update bag count in header (if present on page)
+    document.querySelectorAll(".cart-count").forEach(el => { el.textContent = cart.length; });
+
+    // Build mini-cart item display
+    const itemEl = document.getElementById("minicart-item");
+    if (itemEl) {
+      const imgSrc = product.image || (Array.isArray(product.images) && product.images[0]?.src) || "";
+      const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+      itemEl.innerHTML = `
+        ${imgSrc ? `<img class="minicart-item-img" src="${esc(imgSrc)}" alt="${esc(product.title || "Artwork")}">` : ""}
+        <div class="minicart-item-info">
+          <p class="minicart-item-name">${esc(product.title || "")}</p>
+          <p class="minicart-item-meta">Size: ${esc(size)} &nbsp;·&nbsp; Qty: 1</p>
+          <p class="minicart-item-price">Rs ${esc(price.toLocaleString("en-MU"))}</p>
+        </div>
+      `;
+      if (!imgSrc) itemEl.style.gridTemplateColumns = "1fr";
+    }
+
+    // Open drawer
+    const overlay = document.getElementById("minicart-overlay");
+    const drawer = document.getElementById("minicart-drawer");
+    if (overlay && drawer) {
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden", "false");
+      drawer.classList.add("open");
+      drawer.setAttribute("aria-hidden", "false");
+      document.getElementById("minicart-close")?.focus();
+    }
+  });
+
+  // Mini-cart close logic
+  function closeMiniCart() {
+    const overlay = document.getElementById("minicart-overlay");
+    const drawer = document.getElementById("minicart-drawer");
+    if (overlay && drawer) {
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden", "true");
+      drawer.classList.remove("open");
+      drawer.setAttribute("aria-hidden", "true");
+      document.querySelector(".add-to-cart-detail")?.focus();
+    }
+  }
+
+  document.getElementById("minicart-close")?.addEventListener("click", closeMiniCart);
+  document.getElementById("minicart-overlay")?.addEventListener("click", closeMiniCart);
+  document.getElementById("minicart-continue")?.addEventListener("click", closeMiniCart);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && document.getElementById("minicart-drawer")?.classList.contains("open")) {
+      closeMiniCart();
+    }
   });
 
   renderMain();

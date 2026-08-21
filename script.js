@@ -216,3 +216,4 @@ if (newsletterForm) newsletterForm.addEventListener("submit", (event) => { event
 if (document.getElementById("product-grid")) { renderProducts(); saveCart(); }
 if (location.hash === "#tracking") openModal("tracking-modal");
 if (location.hash === "#policies") openModal("policies-modal");
+if (location.hash === "#bag") { renderCart(); openModal("cart-modal"); history.replaceState(null, "", location.pathname); }

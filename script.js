@@ -5,7 +5,7 @@ const products = [
     category: "Mauritius Street Scene",
     price: 250,
     size: "A3 (29.7 × 42 cm)",
-    paper: "310gsm archival matte paper",
+    paper: "Munken Pure 240gsm matte paper",
     image: "images/fazalux/chatty-fazalux-front.png",
     images: [
       { type: "image", src: "images/fazalux/chatty-fazalux-frame.png", alt: "Fazalux Magasin in Frame" },
@@ -154,7 +154,7 @@ function showProduct(id) {
       <p class="sr-only" id="gallery-status" aria-live="polite"></p>
     </div>
     <div><p class="eyebrow">${selectedProduct.category}</p><h2>${selectedProduct.title}</h2><p class="price">From ${formatPrice(selectedProduct.price)}</p><p class="description">${selectedProduct.description}</p>
-    <div class="detail-row"><label>Choose your size</label><div class="sizes"><button class="size-option active" data-size="A4">A4 &middot; ${formatPrice(selectedProduct.price)}</button><button class="size-option" data-size="A3">A3 &middot; ${formatPrice(selectedProduct.price + 700)}</button><button class="size-option" data-size="A2">A2 &middot; ${formatPrice(selectedProduct.price + 1550)}</button></div></div>
+    <div class="detail-row"><label>Choose your size</label><div class="sizes"><button class="size-option active" data-size="A6">A6 &middot; ${formatPrice(selectedProduct.price)}</button><button class="size-option" data-size="A5">A5 &middot; ${formatPrice(selectedProduct.price + 250)}</button><button class="size-option" data-size="A4">A4 &middot; ${formatPrice(selectedProduct.price + 300)}</button></div></div>
     <div class="detail-row"><label>Paper</label><p>310gsm textured archival fine-art paper</p></div><div class="detail-row">
     <div class="detail-row"><label>Shipping costs</label><p>Local and international postage cost an extra Rs 50 and Rs 200 respectively.</p></div><div class="detail-row">
     <label>Preparation time</label><p>Made to order in 5–8 business days</p></div>

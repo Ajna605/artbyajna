@@ -25,7 +25,7 @@ const products = [
   ], description: "A boat rests calmly on the serene waters of Mauritius. Location Unknown" },
   { id: "infinity-papaya",
     title: "Infinity Papaya", category: "Mauritius Food Scene", price: 250, image: "images/papaya/01_front.jpg", images: [
-    { type: "image", src: "images/papaya/03_framed.png", alt: "Infinity Papaya print with a golden citrus still life" },
+    { type: "image", src: "images/papaya/03_framed.jpg", alt: "Infinity Papaya print with a golden citrus still life" },
     { type: "image", src: "images/papaya/02_detail.jpg", alt: "Infinity Papaya print detail with sunlit yellow fruit" },
     { type: "image", src: "images/papaya/04_styled_shells.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" },
     { type: "image", src: "images/papaya/05_back.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" },

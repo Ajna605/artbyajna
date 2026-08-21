@@ -32,11 +32,11 @@ const products = [
     { type: "video", src: "images/papaya/showflip.mp4", poster: "images/papaya/04_styled_shells.jpg", alt: "Infinity Papaya print in a warm, sunlit interior" }
   ], description: "Something we are all used to seeing and are often blessed to taste - papaya from below." },
   { id: "Tractor Monkeys", title: "Tractor Monkeys", category: "Mauritius Street Scene", price: 250, image: "images/tractor_monkeys/01_front.png", images: [
-    { type: "image", src: "images/tractor_monkeys/04_framed.png", alt: "Tractor Monkeys print with a luminous green island landscape" },
-    { type: "image", src: "images/tractor_monkeys/02_detail.jpg", alt: "Tractor Monkeys print detail showing layered tropical greens" },
-    { type: "image", src: "images/tractor_monkeys/03_styled_shells.jpg", alt: "Tractor Monkeys print displayed with a view of misty hills" },
-    { type: "image", src: "images/tractor_monkeys/05_back.jpg", alt: "Tractor Monkeys print displayed with a view of misty hills" },
-    { type: "video", src: "images/tractor_monkeys/showflip.mp4", poster: "images/tractor_monkeys/01_front.png", alt: "Tractor Monkeys print displayed in video" }
+    { type: "image", src: "images/tractor_monkeys/04_frame.png", alt: "Tractor Monkeys print with a luminous green island landscape" },
+    { type: "image", src: "images/tractor_monkeys/02_detail_closeup.jpg", alt: "Tractor Monkeys print detail showing layered tropical greens" },
+    { type: "image", src: "images/tractor_monkeys/03_shell.png", alt: "Tractor Monkeys print displayed with a view of misty hills" },
+    { type: "image", src: "images/tractor_monkeys/05_back.png", alt: "Tractor Monkeys print displayed with a view of misty hills" },
+    { type: "video", src: "images/tractor_monkeys/showflip2.mp4", poster: "images/tractor_monkeys/01_front.png", alt: "Tractor Monkeys print displayed in video" }
   ], description: "These Monkeys have found a home by the Curepipe Bazar. Often fed by the locals, they loiter on this tractor all day long"},
   { id: "the-red-church", title: "The Red Church", category: "Mauritius Seascape", price: 250, image: "images/red_church/01_front.png", images: [
     { type: "image", src: "images/red_church/03_detail.png", alt: "The Red Church print with loose pink petals and green leaves" },

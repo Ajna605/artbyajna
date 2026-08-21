@@ -191,12 +191,44 @@ function showCheckout() {
   <label class="full">Delivery address<textarea required name="address" placeholder="Street address, city, postal code"></textarea></label>
   <label>Country<select required name="country"><option value="">Select your country</option><option>Mauritius</option><option>Australia</option><option>Canada</option><option>France</option><option>United Kingdom</option><option>United States</option><option>Other</option></select></label>
   <label>Preferred payment method<select required name="payment"><option value="">Select a method</option><option value="Bank Transfer - for Mauritius and International">Bank Transfer - for Mauritius and International</option><option value="Juice Payment - Mauritius Only">Juice Payment - Mauritius Only</option></select></label>
-  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" type="submit">Submit order <span>→</span></button></form>`;
+  <section class="full payment-details-panel" id="payment-details-panel" aria-live="polite" aria-label="Payment instructions">${renderPaymentDetails("")}</section><div class="full order-summary-box"><strong>Your print selection</strong><br />${cart.map((item) => `${item.title} (${item.size})`).join("<br />")}<br /><br /><strong>Print subtotal: ${formatPrice(total)}</strong><br />Delivery will be confirmed separately.</div><button class="button button-dark full" id="confirm-transfer-btn" type="button">Already paid? I have made the transfer <span>→</span></button></form>`;
   closeModals(); openModal("checkout-modal");
   const paymentSelect = document.querySelector('#checkout-form select[name="payment"]');
   const paymentDetails = document.getElementById("payment-details-panel");
   if (paymentSelect && paymentDetails) paymentSelect.addEventListener("change", () => { paymentDetails.innerHTML = renderPaymentDetails(paymentSelect.value); });
   document.getElementById("checkout-form").addEventListener("submit", submitOrder);
+  document.getElementById("confirm-transfer-btn").addEventListener("click", () => {
+    const form = document.getElementById("checkout-form");
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const data = new FormData(form);
+    const orderData = {
+      customerName: `${data.get("firstName") || ""} ${data.get("lastName") || ""}`.trim(),
+      customerEmail: data.get("email") || "",
+      phone: data.get("phone") || "",
+      payment: data.get("payment") || "",
+      products: cart,
+      message: "Customer clicked 'I have made the transfer'.",
+      status: "Awaiting verification",
+      confirmedAt: new Date().toISOString(),
+    };
+    handlePaymentConfirmation(orderData);
+  });
+}
+
+async function handlePaymentConfirmation(orderData) {
+  const btn = document.getElementById("confirm-transfer-btn");
+  if (btn) { btn.textContent = "Awaiting verification"; btn.disabled = true; }
+  const reference = `AJNA-${Math.floor(1000 + Math.random() * 9000)}`;
+  const order = { reference, status: "Awaiting verification", name: orderData.customerName, email: orderData.customerEmail, phone: orderData.phone, payment: orderData.payment, products: orderData.products, date: new Date().toLocaleDateString("en-GB") };
+  const orders = savedOrders(); orders.push(order); saveOrders(orders); cart = []; saveCart();
+  try {
+    const res = await fetch("/api/payment-confirmed", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...order, ...orderData }) });
+    if (!res.ok) throw new Error(`Server responded with ${res.status}`);
+  } catch (err) {
+    console.error("Failed to send payment confirmation:", err);
+  }
+  document.getElementById("checkout-content").innerHTML = `<div class="confirmation"><p class="eyebrow">Transfer noted</p><h2>Thank you, ${escapeHtml(order.name.split(" ")[0])}.</h2><p>Your order reference is</p><p class="reference">${reference}</p><span class="status">Awaiting verification</span><p>I'll verify your payment and be in touch personally to confirm your order and arrange delivery.</p><button class="button button-dark close-confirmation">Continue browsing <span>→</span></button></div>`;
+  document.querySelector(".close-confirmation").addEventListener("click", closeModals);
 }
 
 function submitOrder(event) {

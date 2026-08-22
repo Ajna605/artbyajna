@@ -27,6 +27,9 @@
     </div>
   </aside>
 
+  <!-- Reviews section -->
+  <section class="reviews-section section" id="reviews-section" aria-label="Customer reviews"></section>
+
   <script src="script.js"></script>
   <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -222,6 +225,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderMain();
+
+  // Initialise reviews section
+  if (typeof initReviews === "function") initReviews(String(id));
 });
 </script>
 </body>

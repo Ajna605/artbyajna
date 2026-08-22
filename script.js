@@ -102,11 +102,22 @@ function renderProducts() {
     window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
   };
 
-  document.getElementById("product-grid").innerHTML = products.map((product) => `
+  document.getElementById("product-grid").innerHTML = products.map((product) => {
+    const reviews = getProductReviews(product.id);
+    const ratingHtml = reviews.length
+      ? (() => {
+          const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+          const rounded = Math.round(avg);
+          const stars = Array.from({ length: 5 }, (_, i) => `<span class="card-star${i < rounded ? " filled" : ""}" aria-hidden="true">${i < rounded ? "★" : "☆"}</span>`).join("");
+          return `<span class="card-rating" aria-label="Rated ${avg.toFixed(1)} out of 5 stars">${stars}<span class="card-rating-count">(${reviews.length})</span></span>`;
+        })()
+      : "";
+    return `
     <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
-      <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
-    </article>`).join("");
+      <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p>${ratingHtml}</div><span class="product-price">${formatPrice(product.price)}</span></div>
+    </article>`;
+  }).join("");
 
   document.querySelectorAll(".product-card").forEach((card) => {
     card.addEventListener("click", () => openProductPage(card.dataset.product));
@@ -281,6 +292,178 @@ function showStudioOrders() {
     saveOrders(updatedOrders); showStudioOrders();
   }));
 }
+
+// ─── Review system ───────────────────────────────────────────────────────────
+
+const REVIEWS_KEY = "ajna-reviews";
+
+function loadReviews() {
+  return JSON.parse(localStorage.getItem(REVIEWS_KEY) || "{}");
+}
+
+function saveReviews(data) {
+  localStorage.setItem(REVIEWS_KEY, JSON.stringify(data));
+}
+
+function getProductReviews(productId) {
+  return loadReviews()[productId] || [];
+}
+
+function renderStars(rating, interactive = false, nameAttr = "") {
+  return Array.from({ length: 5 }, (_, i) => {
+    const filled = i < rating;
+    if (interactive) {
+      return `<button type="button" class="star-btn${filled ? " filled" : ""}" data-value="${i + 1}" aria-label="Rate ${i + 1} star${i > 0 ? "s" : ""}" aria-pressed="${filled}">${filled ? "★" : "☆"}</button>`;
+    }
+    return `<span class="star${filled ? " filled" : ""}" aria-hidden="true">${filled ? "★" : "☆"}</span>`;
+  }).join("");
+}
+
+function renderReviewCard(review) {
+  const date = new Date(review.date).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+  return `
+    <div class="review-card">
+      <div class="review-card-head">
+        <span class="review-stars" aria-label="Rated ${review.rating} out of 5 stars">${renderStars(review.rating)}</span>
+        <span class="review-date">${escapeHtml(date)}</span>
+      </div>
+      ${review.title ? `<p class="review-title">${escapeHtml(review.title)}</p>` : ""}
+      <p class="review-text">${escapeHtml(review.text)}</p>
+      ${review.name ? `<p class="review-author">— ${escapeHtml(review.name)}</p>` : ""}
+    </div>`;
+}
+
+function renderReviewsList(productId, sortBy = "date") {
+  const reviews = getProductReviews(productId);
+  if (!reviews.length) return `<p class="reviews-empty">No reviews yet — be the first to share your thoughts.</p>`;
+
+  const sorted = [...reviews].sort((a, b) => sortBy === "rating" ? b.rating - a.rating : new Date(b.date) - new Date(a.date));
+  const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
+  const count = reviews.length;
+
+  return `
+    <div class="reviews-summary">
+      <span class="reviews-avg-stars" aria-label="Average rating ${avg} out of 5">${renderStars(Math.round(avg))}</span>
+      <span class="reviews-avg-score">${avg}</span>
+      <span class="reviews-count">(${count} review${count !== 1 ? "s" : ""})</span>
+    </div>
+    <div class="reviews-sort">
+      <label for="reviews-sort-select">Sort by</label>
+      <select id="reviews-sort-select" class="reviews-sort-select">
+        <option value="date"${sortBy === "date" ? " selected" : ""}>Newest first</option>
+        <option value="rating"${sortBy === "rating" ? " selected" : ""}>Highest rating</option>
+      </select>
+    </div>
+    <div class="reviews-list">${sorted.map(renderReviewCard).join("")}</div>`;
+}
+
+function renderReviewForm(productId) {
+  return `
+    <div class="review-form-wrap">
+      <h3 class="review-form-heading">Write a review</h3>
+      <form class="review-form" id="review-form" novalidate>
+        <div class="review-form-stars" role="group" aria-label="Your rating (required)">
+          <span class="detail-row-label">Your rating</span>
+          <div class="star-selector" id="star-selector" aria-required="true">${renderStars(0, true)}</div>
+          <input type="hidden" id="review-rating" name="rating" value="0" />
+          <p class="review-field-error" id="rating-error" aria-live="polite" hidden>Please select a rating.</p>
+        </div>
+        <label class="review-label">Review title<input class="review-input" type="text" name="title" placeholder="Summarise your experience" maxlength="100" /></label>
+        <label class="review-label">Your review <span aria-hidden="true">*</span><textarea class="review-input review-textarea" name="text" placeholder="Tell others about this print…" required maxlength="1000"></textarea></label>
+        <p class="review-field-error" id="text-error" aria-live="polite" hidden>Please enter your review.</p>
+        <label class="review-label">Your name (optional)<input class="review-input" type="text" name="name" placeholder="How should we display your name?" maxlength="60" /></label>
+        <p class="review-field-error" id="duplicate-error" aria-live="polite" hidden>You have already submitted a review for this product.</p>
+        <button class="button button-dark review-submit" type="submit">Submit review <span>→</span></button>
+      </form>
+      <p class="review-success" id="review-success" hidden>✓ Thank you for your review!</p>
+    </div>`;
+}
+
+function initReviews(productId) {
+  const section = document.getElementById("reviews-section");
+  if (!section) return;
+
+  function renderSection(sortBy = "date") {
+    section.innerHTML = `
+      <h2 class="reviews-heading">Customer reviews</h2>
+      <div class="reviews-layout">
+        <div class="reviews-display" id="reviews-display">${renderReviewsList(productId, sortBy)}</div>
+        ${renderReviewForm(productId)}
+      </div>`;
+    attachReviewEvents(productId);
+  }
+
+  function attachReviewEvents(pid) {
+    // Star selector
+    const starSelector = document.getElementById("star-selector");
+    const ratingInput = document.getElementById("review-rating");
+    if (starSelector && ratingInput) {
+      starSelector.querySelectorAll(".star-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const val = Number(btn.dataset.value);
+          ratingInput.value = val;
+          starSelector.querySelectorAll(".star-btn").forEach((b, i) => {
+            const active = i < val;
+            b.classList.toggle("filled", active);
+            b.setAttribute("aria-pressed", String(active));
+            b.textContent = active ? "★" : "☆";
+          });
+          document.getElementById("rating-error").hidden = true;
+        });
+      });
+    }
+
+    // Sort
+    const sortSelect = document.getElementById("reviews-sort-select");
+    if (sortSelect) {
+      sortSelect.addEventListener("change", () => renderSection(sortSelect.value));
+    }
+
+    // Form submit
+    const form = document.getElementById("review-form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const rating = Number(data.get("rating") || 0);
+        const text = (data.get("text") || "").trim();
+
+        // Reset errors
+        document.getElementById("rating-error").hidden = true;
+        document.getElementById("text-error").hidden = true;
+
+        let valid = true;
+        if (!rating) { document.getElementById("rating-error").hidden = false; valid = false; }
+        if (!text) { document.getElementById("text-error").hidden = false; valid = false; }
+        if (!valid) return;
+
+        const review = {
+          rating,
+          title: (data.get("title") || "").trim(),
+          text,
+          name: (data.get("name") || "").trim(),
+          date: new Date().toISOString()
+        };
+
+        const allReviews = loadReviews();
+        if (!allReviews[pid]) allReviews[pid] = [];
+        allReviews[pid].push(review);
+        saveReviews(allReviews);
+
+        // Rebuild section so display and events are all consistent
+        renderSection("date");
+
+        // Re-show success message after rebuild
+        const successEl = document.getElementById("review-success");
+        if (successEl) successEl.hidden = false;
+      });
+    }
+  }
+
+  renderSection();
+}
+
+// ─── End review system ───────────────────────────────────────────────────────
 
 document.addEventListener("click", (event) => {
   if (event.target.classList.contains("cart-trigger")) { renderCart(); openModal("cart-modal"); }

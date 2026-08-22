@@ -27,6 +27,9 @@
     </div>
   </aside>
 
+  <!-- Reviews section -->
+  <section class="reviews-section section" id="reviews-section" aria-label="Customer reviews"></section>
+
   <script src="script.js"></script>
   <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -83,9 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="detail-row">
           <label>Choose your size</label>
           <div class="sizes">
-            <button class="size-option active" data-size="A4">A4 · Rs ${basePrice.toLocaleString("en-MU")}</button>
-            <button class="size-option" data-size="A3">A3 · Rs ${(basePrice + 700).toLocaleString("en-MU")}</button>
-            <button class="size-option" data-size="A2">A2 · Rs ${(basePrice + 1550).toLocaleString("en-MU")}</button>
+            <button class="size-option active" data-size="A6">A6 · Rs ${basePrice.toLocaleString("en-MU")}</button>
+            <button class="size-option" data-size="A5">A5 · Rs ${(basePrice + 250).toLocaleString("en-MU")}</button>
+            <button class="size-option" data-size="A4">A4 · Rs ${(basePrice + 500).toLocaleString("en-MU")}</button>
           </div>
         </div>
 
@@ -222,6 +225,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   renderMain();
+
+  // Initialise reviews section
+  if (typeof initReviews === "function") initReviews(String(id));
 });
 </script>
 </body>

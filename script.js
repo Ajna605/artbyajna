@@ -370,6 +370,15 @@ function renderReviewForm(productId) {
     </div>`;
 }
 
+function hashEmail(email) {
+  // Simple deterministic hash for duplicate-check; not security-critical,
+  // just avoids storing the raw address in localStorage.
+  const s = email.toLowerCase().trim();
+  let h = 0;
+  for (let i = 0; i < s.length; i++) { h = (Math.imul(31, h) + s.charCodeAt(i)) | 0; }
+  return h.toString(36);
+}
+
 function initReviews(productId) {
   const section = document.getElementById("reviews-section");
   if (!section) return;
@@ -418,8 +427,9 @@ function initReviews(productId) {
         const data = new FormData(form);
         const rating = Number(data.get("rating") || 0);
         const text = (data.get("text") || "").trim();
-        const email = (data.get("email") || "").trim();
-        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const emailInput = form.querySelector('input[name="email"]');
+        const email = (emailInput ? emailInput.value : "").trim();
+        const emailOk = emailInput ? emailInput.checkValidity() && email.length > 0 : false;
 
         // Reset errors
         document.getElementById("rating-error").hidden = true;
@@ -433,8 +443,9 @@ function initReviews(productId) {
         if (!emailOk) { document.getElementById("email-error").hidden = false; valid = false; }
         if (!valid) return;
 
+        const emailHash = hashEmail(email);
         const existing = getProductReviews(pid);
-        if (existing.some(r => r.email.toLowerCase() === email.toLowerCase())) {
+        if (existing.some(r => r.emailHash === emailHash)) {
           document.getElementById("duplicate-error").hidden = false;
           return;
         }
@@ -444,7 +455,7 @@ function initReviews(productId) {
           title: (data.get("title") || "").trim(),
           text,
           name: (data.get("name") || "").trim(),
-          email,
+          emailHash,
           date: new Date().toISOString()
         };
 
@@ -453,16 +464,12 @@ function initReviews(productId) {
         allReviews[pid].push(review);
         saveReviews(allReviews);
 
-        document.getElementById("review-success").hidden = false;
-        form.reset();
-        document.getElementById("review-rating").value = "0";
-        document.getElementById("star-selector").querySelectorAll(".star-btn").forEach(b => { b.classList.remove("filled"); b.setAttribute("aria-pressed", "false"); b.textContent = "☆"; });
+        // Rebuild section so display and events are all consistent
+        renderSection("date");
 
-        // Refresh display
-        const display = document.getElementById("reviews-display");
-        if (display) display.innerHTML = renderReviewsList(pid, "date");
-        const newSortSelect = document.getElementById("reviews-sort-select");
-        if (newSortSelect) newSortSelect.addEventListener("change", () => renderSection(newSortSelect.value));
+        // Re-show success message after rebuild
+        const successEl = document.getElementById("review-success");
+        if (successEl) successEl.hidden = false;
       });
     }
   }

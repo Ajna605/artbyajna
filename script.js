@@ -102,11 +102,22 @@ function renderProducts() {
     window.location.href = `product.html?id=${encodeURIComponent(productId)}`;
   };
 
-  document.getElementById("product-grid").innerHTML = products.map((product) => `
+  document.getElementById("product-grid").innerHTML = products.map((product) => {
+    const reviews = getProductReviews(product.id);
+    const ratingHtml = reviews.length
+      ? (() => {
+          const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+          const rounded = Math.round(avg);
+          const stars = Array.from({ length: 5 }, (_, i) => `<span class="card-star${i < rounded ? " filled" : ""}" aria-hidden="true">${i < rounded ? "★" : "☆"}</span>`).join("");
+          return `<span class="card-rating" aria-label="Rated ${avg.toFixed(1)} out of 5 stars">${stars}<span class="card-rating-count">(${reviews.length})</span></span>`;
+        })()
+      : "";
+    return `
     <article class="product-card" data-product="${product.id}" role="button" tabindex="0" aria-label="View ${product.title} print details">
       <div class="product-image"><img src="${product.image}" alt="${product.title} watercolor print" /></div>
-      <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p></div><span class="product-price">${formatPrice(product.price)}</span></div>
-    </article>`).join("");
+      <div class="product-meta"><div><h3>${product.title}</h3><p>${product.category}</p>${ratingHtml}</div><span class="product-price">${formatPrice(product.price)}</span></div>
+    </article>`;
+  }).join("");
 
   document.querySelectorAll(".product-card").forEach((card) => {
     card.addEventListener("click", () => openProductPage(card.dataset.product));
@@ -361,22 +372,11 @@ function renderReviewForm(productId) {
         <label class="review-label">Your review <span aria-hidden="true">*</span><textarea class="review-input review-textarea" name="text" placeholder="Tell others about this print…" required maxlength="1000"></textarea></label>
         <p class="review-field-error" id="text-error" aria-live="polite" hidden>Please enter your review.</p>
         <label class="review-label">Your name (optional)<input class="review-input" type="text" name="name" placeholder="How should we display your name?" maxlength="60" /></label>
-        <label class="review-label">Email address <span aria-hidden="true">*</span><input class="review-input" type="email" name="email" placeholder="Used only to prevent duplicates" required maxlength="200" /></label>
-        <p class="review-field-error" id="email-error" aria-live="polite" hidden>Please enter a valid email address.</p>
         <p class="review-field-error" id="duplicate-error" aria-live="polite" hidden>You have already submitted a review for this product.</p>
         <button class="button button-dark review-submit" type="submit">Submit review <span>→</span></button>
       </form>
       <p class="review-success" id="review-success" hidden>✓ Thank you for your review!</p>
     </div>`;
-}
-
-function hashEmail(email) {
-  // Simple deterministic hash for duplicate-check; not security-critical,
-  // just avoids storing the raw address in localStorage.
-  const s = email.toLowerCase().trim();
-  let h = 0;
-  for (let i = 0; i < s.length; i++) { h = (Math.imul(31, h) + s.charCodeAt(i)) | 0; }
-  return h.toString(36);
 }
 
 function initReviews(productId) {
@@ -427,35 +427,21 @@ function initReviews(productId) {
         const data = new FormData(form);
         const rating = Number(data.get("rating") || 0);
         const text = (data.get("text") || "").trim();
-        const emailInput = form.querySelector('input[name="email"]');
-        const email = (emailInput ? emailInput.value : "").trim();
-        const emailOk = emailInput ? emailInput.checkValidity() && email.length > 0 : false;
 
         // Reset errors
         document.getElementById("rating-error").hidden = true;
         document.getElementById("text-error").hidden = true;
-        document.getElementById("email-error").hidden = true;
-        document.getElementById("duplicate-error").hidden = true;
 
         let valid = true;
         if (!rating) { document.getElementById("rating-error").hidden = false; valid = false; }
         if (!text) { document.getElementById("text-error").hidden = false; valid = false; }
-        if (!emailOk) { document.getElementById("email-error").hidden = false; valid = false; }
         if (!valid) return;
-
-        const emailHash = hashEmail(email);
-        const existing = getProductReviews(pid);
-        if (existing.some(r => r.emailHash === emailHash)) {
-          document.getElementById("duplicate-error").hidden = false;
-          return;
-        }
 
         const review = {
           rating,
           title: (data.get("title") || "").trim(),
           text,
           name: (data.get("name") || "").trim(),
-          emailHash,
           date: new Date().toISOString()
         };
 

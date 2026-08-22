@@ -313,3 +313,7 @@ footer
 .review-submit{margin-top:6px;width:100%}
 .review-success{font:13px "DM Mono",monospace;color:var(--brand-teal);margin:10px 0 0}
 @media(max-width:800px){.reviews-layout{grid-template-columns:1fr;gap:40px}}
+.card-rating{display:inline-flex;align-items:center;gap:3px;margin-top:5px}
+.card-star{color:#cfe0e6;font-size:12px}
+.card-star.filled{color:#f0a500}
+.card-rating-count{font:10px "DM Mono",monospace;color:var(--muted);margin-left:3px}
